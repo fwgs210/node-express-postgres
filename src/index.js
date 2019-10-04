@@ -1,3 +1,7 @@
+require('dotenv').config({ path: '.env' });
+
+
+
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
@@ -6,9 +10,15 @@ const isDev = process.env.NODE_ENV !== 'production'
 
 const { uri, PORT } = require('./config/serverSetup')
 const initAdminUser = require('./utils/initAdminUser')
+const routes = require('./routes')
+const notFoundRoute = require('./routes/notFound')
 
+// Connect to our Database and handle any bad connections
 mongoose.connect(uri, { useNewUrlParser: true })
-// const env = app.get('env');
+mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
+mongoose.connection.on('error', (err) => {
+  console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
+});
 
 // express code here
 const app = express()
@@ -23,11 +33,14 @@ if (!isDev) { // PROD setup
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/api/v1', require('./routes'))
+app.use('/api/v1', routes)
 
 app.get('/', (req, res) => {
   res.send(`Express app is running!`)
 })
+
+// If that above routes didnt work, we 404 them and forward to error handler
+app.use(notFoundRoute);
 
 app.listen(PORT, err => {
   if (err) throw err;

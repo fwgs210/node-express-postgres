@@ -2,12 +2,12 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const router = express.Router()
-const User = require('./models/user')
-const Post = require('./models/post')
-const auth = require('./middleware/auth')
-const verifyAdmin = require('./middleware/verifyAdmin')
-const { sign } = require('./utils/tokenService')
-const { client, mailTemplate } = require('./mail')
+const User = require('../models/user')
+const Post = require('../models/post')
+const auth = require('../middleware/auth')
+const verifyAdmin = require('../middleware/verifyAdmin')
+const { sign } = require('../utils/tokenService')
+const { client, mailTemplate } = require('../mail')
 
 router.route('/password-reset').post((req, res) => {
 
