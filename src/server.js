@@ -60,7 +60,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 if (!isDev) { 
-  app.use('/.netlify/functions/index', route); // path must route to lambda
+  app.use('/.netlify/functions/server', route); // path must route to lambda
 } else {
   app.use(route)
 }
