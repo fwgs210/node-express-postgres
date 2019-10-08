@@ -55,15 +55,17 @@ passport.use(strategy);
 app.use(passport.initialize());
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-if (!isDev) { 
-  app.use('/.netlify/functions/server', route); // path must route to lambda
-} else {
-  app.use(route)
-}
+// if (!isDev) { 
+//   app.use('/.netlify/functions/server', route); // path must route to lambda
+// } else {
+//   app.use(route)
+// }
+
+app.use('/.netlify/functions/server', route);
 
 
 app.use('/', (req, res) => {
