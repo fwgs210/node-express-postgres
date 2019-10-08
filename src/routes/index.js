@@ -6,6 +6,6 @@ const notFoundRoute = require('./notFound')
 // v1 route
 router.use('/api/v1', v1)
 
-router.use(notFoundRoute)
+// router.use(notFoundRoute)
 
 module.exports = router
