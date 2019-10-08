@@ -7,6 +7,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const isDev = process.env.NODE_ENV !== 'production'
+const documentation = require('./swagger')
+
 // const passport = require("passport");
 // const passportJWT = require("passport-jwt");
 // const ExtractJwt = passportJWT.ExtractJwt;
@@ -61,11 +63,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 if (!isDev) { // PROD setup
-  app.use('/.netlify/functions/server', route)
+  app.use('/.netlify/functions/app', route)
 } else {
   app.use(route)
 }
-
+app.use('/api', documentation)
 app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 // If that above routes didnt work, we 404 them and forward to error handler
