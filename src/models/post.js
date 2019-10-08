@@ -13,6 +13,22 @@ const postSchema = new Schema({
     categories: { type: Array, required: false }
 })
 
+// function autopopulate(next) {
+//     this.populate('author');
+//     next();
+//   }
+  
+// Define our indexes
+postSchema.index({
+    author: 'text',
+    title: 'text',
+    content: 'text'
+});
+
+// postSchema.pre('find', autopopulate);
+// postSchema.pre('findOne', autopopulate);
+
+
 const Post = mongoose.model('Post', postSchema)
 
 module.exports = Post

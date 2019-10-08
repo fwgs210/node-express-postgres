@@ -5,12 +5,19 @@ require('dotenv').config({ path: '.env' });
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
-const enforce = require('express-sslify');
 const isDev = process.env.NODE_ENV !== 'production'
+const passport = require("passport");
+const passportJWT = require("passport-jwt");
+const ExtractJwt = passportJWT.ExtractJwt;
+const JwtStrategy = passportJWT.Strategy;
+// Configure its options
+const jwtOptions = {};
+jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
+jwtOptions.secretOrKey = process.env.JWTSECRET;
 
 const { uri, PORT } = require('./config/serverSetup')
 const initAdminUser = require('./utils/initAdminUser')
-const routes = require('./routes')
+const v1 = require('./routes/v1')
 const notFoundRoute = require('./routes/notFound')
 
 // Connect to our Database and handle any bad connections
@@ -25,15 +32,31 @@ const app = express()
   
 if (!isDev) { // PROD setup
   initAdminUser()
-  app.use(require('prerender-node'));
   console.log('production mode on', PORT)
-  // app.use(enforce.HTTPS({ trustProtoHeader: true })) // set trustProtoHeader TRUE for heroku
-  // process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"; // allow self assigned SSL
 }
+
+const strategy = new JwtStrategy(jwtOptions, (jwt_payload, next) => {
+  console.log('payload received', jwt_payload);
+
+  if (jwt_payload) {
+      // The following will ensure that all routes using 
+      // passport.authenticate have a req.user._id, req.user.userName, req.user.fullName & req.user.role values 
+      // that matches the request payload data
+      next(null, jwt_payload); 
+  } else {
+      next(null, false);
+  }
+});
+
+// tell passport to use our "strategy"
+passport.use(strategy);
+
+// add passport as application-level middleware
+app.use(passport.initialize());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/api/v1', routes)
+app.use('/api/v1', v1)
 
 app.get('/', (req, res) => {
   res.send(`Express app is running!`)

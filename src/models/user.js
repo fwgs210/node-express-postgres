@@ -41,6 +41,14 @@ userSchema.methods.comparePassword = function(password) {
   return bcrypt.compare(password, this.password);
 };
 
+function autopopulate(next) {
+    this.populate('posts');
+    next();
+  }
+
+userSchema.pre('find', autopopulate);
+userSchema.pre('findOne', autopopulate);
+
 const User = mongoose.model('User', userSchema)
 
 module.exports = User

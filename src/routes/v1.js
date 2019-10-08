@@ -4,61 +4,16 @@ const bcrypt = require('bcryptjs')
 const router = express.Router()
 const User = require('../models/user')
 const Post = require('../models/post')
+const postController = require('../controllers/postController')
+const authController = require('../controllers/authController')
 const auth = require('../middleware/auth')
 const verifyAdmin = require('../middleware/verifyAdmin')
 const { sign } = require('../utils/tokenService')
-const { client, mailTemplate } = require('../mail')
 
-router.route('/password-reset').post((req, res) => {
-
-    const { email } = req.body;
-
-    User.findOne({ email })
-        .then(doc => {
-
-            if (doc) {
-                const token = sign({ userInfo: doc });                
-
-                client.sendEmail(mailTemplate({ toEmail: email, resetToken: token }), error => {
-                    if (error) {
-                        res.status(203).json({ message: 'There was an error sending the email' })
-                    } else {
-                        res.status(200).json({ message: 'Your password reset link is sent to your email.' })
-                    }
-                })
-
-                /* Gmail way below */
-
-                // transport.sendMail(mailTemplate({ toEmail: email, token }))
-
-                // transport.verify(error => {
-                //     if (error) {
-                //         res.status(203).json({ message: 'There was an error sending the email' })
-                //     } else {
-                //         res.status(200).json({ message: 'Your password reset link is sent to your email.' })
-                //     }
-                // });
-            } else {
-                res.status(203).json({ message: 'Your email does not exist in our database.' })
-            }
-        })
-        .catch(err => {
-            res.status(500).json({ message: err.message })
-        })
-
-
-});
+router.route('/password-reset').post(authController.reset);
 
 router.route('/posts')
-    .get((req, res) => {
-        Post.find()
-            .then(posts => {
-                res.status(200).json({ payload: posts })
-            })
-            .catch(err => {
-                res.status(500).json({ message: err.message })
-            })
-    })
+    .get(postController.findAllPosts)
     .post(auth, async (req, res) => {
         const { content, tags, categories, title, featureImg } = req.body
         const { _id, username } = req.token.userInfo
@@ -88,6 +43,9 @@ router.route('/posts')
                 res.status(500).json({ message: err.message })
             })
     })
+
+router.route('/posts/search')
+    .get(postController.searchPosts)
 
 router.route('/posts/update/:id').put(auth, (req, res) => {
     const { content, tags, categories, title, featureImg } = req.body

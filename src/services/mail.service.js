@@ -1,9 +1,9 @@
 
 const postmark = require("postmark");
-const EMAIL_API = require('./config/emailToken')
+const EMAIL_API = require('../config/emailToken')
 const client = new postmark.Client(EMAIL_API.POSTMARK_API_KEY);
 
-const mailTemplate = ({ toEmail, resetToken }) => ({
+const mailTemplate = ({ toEmail, resetURL }) => ({
     "From": EMAIL_API.POSTMARK_FROM_EMAIL,
     "To": toEmail,
     "Subject": "Password Reset",
@@ -16,13 +16,15 @@ const mailTemplate = ({ toEmail, resetToken }) => ({
             font-size: 20px;
         ">
             <h3>Below is your password reset link:</h3>
-            <p><a href="https://tracy-blog.herokuapp.com/reset-password/${resetToken}">Reset your password now</a></p>
+            <a href="${resetURL}">Reset your password now</a><br/>
             <p>- Tracy Su</p>
         </div>`,
 })
 
-module.exports.mailTemplate = mailTemplate;
-module.exports.client = client;
+module.exports = {
+    mailTemplate,
+    client
+};
 
 // nodemailer code below
 
