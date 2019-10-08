@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon start.js",
     "start": "cross-env NODE_ENV=production node start.js",
-    "heroku-postbuild": "npm install"
+    "heroku-postbuild": "npm install",
+    "build": "netlify-lambda build src"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -29,5 +30,9 @@
     "netlify-lambda": "^1.6.3",
     "node-notifier": "^6.0.0",
     "nodemon": "^1.18.9"
+  },
+  "devDependencies": {
+    "netlify-lambda": "^1.6.3",
+    "serverless-http": "^2.3.0"
   }
 }

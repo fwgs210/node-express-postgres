@@ -1,7 +1,8 @@
 require('dotenv').config({ path: '.env' });
 
 
-
+const serverless = require('serverless-http');
+const path = require('path');
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
@@ -15,7 +16,7 @@ const isDev = process.env.NODE_ENV !== 'production'
 // jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
 // jwtOptions.secretOrKey = process.env.JWTSECRET;
 
-const { uri, PORT } = require('./config/serverSetup')
+const { uri } = require('./config/serverSetup')
 const initAdminUser = require('./utils/initAdminUser')
 const route = require('./routes')
 
@@ -29,10 +30,10 @@ mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
 // express code here
 const app = express()
   
-if (!isDev) { // PROD setup
-  initAdminUser()
-  console.log('production mode on', PORT)
-}
+// if (!isDev) { // PROD setup
+//   initAdminUser()
+//   console.log('production mode on')
+// }
 
 // const strategy = new JwtStrategy(jwtOptions, (jwt_payload, next) => {
 //   console.log('payload received', jwt_payload);
@@ -57,14 +58,17 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // api
-app.use(route)
 
 
+if (!isDev) { // PROD setup
+  app.use('/.netlify/functions/server', route)
+} else {
+  app.use(route)
+}
 
-app.use('/', (req, res) => {
-  res.send(`Express app is running!`)
-})
+app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 // If that above routes didnt work, we 404 them and forward to error handler
 
 module.exports = app;
+module.exports.handler = serverless(app);
