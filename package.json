@@ -7,9 +7,8 @@
   "license": "ISC",
   "scripts": {
     "start:dev": "cross-env NODE_ENV=development nodemon server-start.js",
-    "start": "cross-env NODE_ENV=production netlify-lambda serve src",
-    "build": "cross-env NODE_ENV=production netlify-lambda build src",
-    "heroku-postbuild": "npm run start"
+    "start": "cross-env NODE_ENV=production node server-start.js",
+    "heroku-postbuild": "npm install && npm run start"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

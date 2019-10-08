@@ -8,7 +8,6 @@ const bodyParser = require('body-parser')
 const isDev = process.env.NODE_ENV !== 'production'
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
-const serverless = require('serverless-http');
 const ExtractJwt = passportJWT.ExtractJwt;
 const JwtStrategy = passportJWT.Strategy;
 // Configure its options
@@ -57,13 +56,9 @@ app.use(passport.initialize());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// api
+app.use(route)
 
-
-if (!isDev) { 
-  app.use('/.netlify/functions/server', route); // path must route to lambda
-} else {
-  app.use(route)
-}
 
 
 app.use('/', (req, res) => {
@@ -73,4 +68,3 @@ app.use('/', (req, res) => {
 // If that above routes didnt work, we 404 them and forward to error handler
 
 module.exports = app;
-module.exports.handler = serverless(app);
