@@ -23,9 +23,7 @@
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "postmark": "^2.2.4",
-    "serverless-http": "^2.3.0"
-  },
-  "devDependencies": {
+    "serverless-http": "^2.3.0",
     "concurrently": "^4.1.0",
     "errorhandler": "^1.5.1",
     "netlify-lambda": "^1.6.3",
