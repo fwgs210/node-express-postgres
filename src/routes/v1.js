@@ -11,7 +11,7 @@ const verifyAdmin = require('../middleware/verifyAdmin')
 const { sign } = require('../utils/tokenService')
 
 router.route('/')
-    .get((req, res) => res.send('express app running!'))
+    .get((req, res) => res.send('api is up'))
 
 router.route('/password-reset').post(authController.reset);
 
