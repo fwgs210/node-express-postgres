@@ -18,8 +18,7 @@ jwtOptions.secretOrKey = process.env.JWTSECRET;
 
 const { uri, PORT } = require('./config/serverSetup')
 const initAdminUser = require('./utils/initAdminUser')
-const v1 = require('./routes/v1')
-const notFoundRoute = require('./routes/notFound')
+const route = require('./routes')
 
 // Connect to our Database and handle any bad connections
 mongoose.connect(uri, { useNewUrlParser: true })
@@ -57,14 +56,21 @@ app.use(passport.initialize());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/api/v1', v1)
 
-app.get('/', (req, res) => {
+
+
+if (!isDev) { 
+  app.use('/.netlify/functions/index', route); // path must route to lambda
+} else {
+  app.use(route)
+}
+
+
+app.use('/', (req, res) => {
   res.send(`Express app is running!`)
 })
 
 // If that above routes didnt work, we 404 them and forward to error handler
-app.use(notFoundRoute);
 
 module.exports = app;
 module.exports.handler = serverless(app);
