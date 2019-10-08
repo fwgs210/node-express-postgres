@@ -10,6 +10,9 @@ const auth = require('../middleware/auth')
 const verifyAdmin = require('../middleware/verifyAdmin')
 const { sign } = require('../utils/tokenService')
 
+router.route('/')
+    .get((req, res) => res.send('express app running!'))
+
 router.route('/password-reset').post(authController.reset);
 
 router.route('/posts')
