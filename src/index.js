@@ -8,6 +8,7 @@ const bodyParser = require('body-parser')
 const isDev = process.env.NODE_ENV !== 'production'
 const passport = require("passport");
 const passportJWT = require("passport-jwt");
+const serverless = require('serverless-http');
 const ExtractJwt = passportJWT.ExtractJwt;
 const JwtStrategy = passportJWT.Strategy;
 // Configure its options
@@ -65,7 +66,5 @@ app.get('/', (req, res) => {
 // If that above routes didnt work, we 404 them and forward to error handler
 app.use(notFoundRoute);
 
-app.listen(PORT, err => {
-  if (err) throw err;
-  console.log(`✅  Server is up and running on port ${PORT}.`)
-})
+module.exports = app;
+module.exports.handler = serverless(app);

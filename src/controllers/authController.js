@@ -14,13 +14,13 @@ module.exports.reset = async(req, res) => {
     }
 
     try {
-        const user = await userService.findUserByEmail(email.trim())
+        const user = await userService.findUserByEmail(email)
 
         if (user) {
             const token = sign({ userInfo: user });       
             const resetURL = `http://${req.headers.host}/reset-password/${token}`
 
-            mailService.client.sendEmail(mailService.mailTemplate({ toEmail: email.trim(), resetURL }), error => {
+            mailService.client.sendEmail(mailService.mailTemplate({ toEmail: email, resetURL }), error => {
                 if (error) {
                     res.status(203).json({ message: 'There was an error sending the email' })
                 } else {
