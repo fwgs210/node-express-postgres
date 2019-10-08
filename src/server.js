@@ -23,9 +23,9 @@ const route = require('./routes')
 // Connect to our Database and handle any bad connections
 mongoose.connect(uri, { useNewUrlParser: true })
 mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
-// mongoose.connection.on('error', (err) => {
-//   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
-// });
+mongoose.connection.on('error', (err) => {
+  console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
+});
 
 // express code here
 const app = express()
