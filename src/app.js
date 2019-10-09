@@ -29,23 +29,17 @@ const whitelist = [
     'https://node-express-api.netlify.com'
 ]
 
-const corsOptionsDelegate = function (req, callback) {
-  let corsOptions;
-  if (whitelist.indexOf(req.header('Origin')) !== -1) {
-    corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
-  } else {
-    corsOptions = { origin: false } // disable CORS for this request
-  }
-  callback(null, corsOptions) // callback expects two parameters: error and options
+const corsOptions = {
+  origin: whitelist,
+  optionsSuccessStatus: 200
 }
-
 
 // express code here
 const app = express()
 
 //set up cors
-app.use(cors(corsOptionsDelegate))
-app.options('*', cors(corsOptionsDelegate));
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
