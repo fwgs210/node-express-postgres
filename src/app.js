@@ -28,17 +28,15 @@ const whitelist = [
     'https://tracy-blog.herokuapp.com',
     'https://node-express-api.netlify.com'
 ]
-  
-const corsOptions = {
-    origin: function (origin, callback) {
-      if (whitelist.indexOf(origin) !== -1) {
-        callback(null, true)
-      } else {
-        callback(new Error(`Not allowed by CORS origin: ${origin}`))
-      }
-    },
-    optionsSuccessStatus: 200,
-    credentials: true
+
+const corsOptionsDelegate = function (req, callback) {
+  let corsOptions;
+  if (whitelist.indexOf(req.header('Origin')) !== -1) {
+    corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+  } else {
+    corsOptions = { origin: false } // disable CORS for this request
+  }
+  callback(null, corsOptions) // callback expects two parameters: error and options
 }
 
 
@@ -46,12 +44,12 @@ const corsOptions = {
 const app = express()
 
 //set up cors
+app.use(cors(corsOptionsDelegate))
+app.options('*', cors(corsOptionsDelegate));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors(corsOptions))
-app.options('*', cors(corsOptions));
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
