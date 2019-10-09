@@ -1,6 +1,7 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
+const passport    = require('passport');
 const router = express.Router()
 const User = require('../models/user')
 const Post = require('../models/post')
@@ -11,13 +12,13 @@ const verifyAdmin = require('../middleware/verifyAdmin')
 const { sign } = require('../utils/tokenService')
 
 router.route('/')
-    .get((req, res) => res.send('api is up'))
+    .get((req, res) => res.send('api v1 is up'))
 
 router.route('/password-reset').post(authController.reset);
 
 router.route('/posts')
     .get(postController.findAllPosts)
-    .post(auth, async (req, res) => {
+    .post(passport.authenticate('jwt', {session: false}), async (req, res) => {
         const { content, tags, categories, title, featureImg } = req.body
         const { _id, username } = req.token.userInfo
         const sanitizedTitle = title.split(' ').join('-')

@@ -6,6 +6,7 @@ const path = require('path');
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser');
 const isDev = process.env.NODE_ENV !== 'production'
 
 // const passport = require("passport");
@@ -20,6 +21,9 @@ const isDev = process.env.NODE_ENV !== 'production'
 const { uri } = require('./config/serverSetup')
 const initAdminUser = require('./utils/initAdminUser')
 const route = require('./routes')
+const routeNotFound = require('./routes/notFound')
+const routeError = require('./routes/errorRoute')
+require('./middleware/passport');
 
 // Connect to our Database and handle any bad connections
 mongoose.connect(uri, { useNewUrlParser: true })
@@ -57,16 +61,22 @@ const app = express()
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
+
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 // api
-
-
 if (!isDev) { // PROD setup
   app.use('/.netlify/functions/app', route)
 } else {
   app.use(route)
 }
-app.use('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
+
+// catch 404 and forward to error handler
+app.use(routeNotFound);
+
+// error handler
+app.use(routeError);
 
 // If that above routes didnt work, we 404 them and forward to error handler
 

@@ -25,7 +25,7 @@ module.exports.reset = async(req, res) => {
             } = user
 
             const token = sign({ 
-                _id,
+                id: _id,
                 username,
                 email
              });       
