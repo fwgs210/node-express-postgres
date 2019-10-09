@@ -23,23 +23,11 @@ mongoose.connection.on('error', (err) => {
   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
 });
 
-const whitelist = [
-    'https://www.tracysu.com', 
-    'https://tracy-blog.herokuapp.com',
-    'https://node-express-api.netlify.com'
-]
-
-const corsOptions = {
-  origin: whitelist,
-  optionsSuccessStatus: 200
-}
-
 // express code here
 const app = express()
 
 //set up cors
-app.use(cors(corsOptions))
-app.options('*', cors(corsOptions));
+app.use(cors())
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
