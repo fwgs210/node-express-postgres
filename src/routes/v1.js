@@ -94,20 +94,7 @@ router.route('/posts/:user').get((req, res) => {
 })
 
 // // change password
-router.route('/user/change-password').post(auth, async (req, res) => {
-    const { newPassword } = req.body;
-    const { username, _id } = req.token.userInfo
-    const hash = await bcrypt.hash(newPassword, 10)
-
-    User.findOneAndUpdate({ _id, username }, { password: hash }, { new: true }) // set new true to get the updated content
-        .then(doc => {
-            const token = sign({ userInfo: doc });
-            res.status(200).json({ message: 'Password updated.', token })
-        })
-        .catch(err => {
-            res.status(500).json({ message: err.message })
-        })
-})
+router.route('/user/change-password').post(auth, authController.updateUserPassword)
 
 // new user
 router.route('/register').post(async (req, res) => {

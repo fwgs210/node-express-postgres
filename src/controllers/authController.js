@@ -17,7 +17,18 @@ module.exports.reset = async(req, res) => {
         const user = await userService.findUserByEmail(email)
 
         if (user) {
-            const token = sign({ userInfo: user });       
+            
+            const {
+                _id,
+                username,
+                email
+            } = user
+
+            const token = sign({ 
+                _id,
+                username,
+                email
+             });       
             const resetURL = `http://${req.headers.host}/reset-password/${token}`
 
             mailService.client.sendEmail(mailService.mailTemplate({ toEmail: email, resetURL }), error => {
@@ -42,6 +53,20 @@ module.exports.reset = async(req, res) => {
         } else {
             res.status(203).json({ message: 'Your email does not exist in our database.' })
         }
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+}
+
+module.exports.updateUserPassword = async (req, res) => {
+    try {
+        const { newPassword } = req.body;
+        const { _id } = req.token
+        const hashPass = await bcrypt.hash(newPassword, 10)
+    
+        const updatedUser = await userService.findUserByIdAndUpdatePassword(_id, hashPass)
+        const newToken = await sign(updatedUser)
+        res.status(200).json({ message: 'Password updated.', token: newToken })
     } catch (err) {
         res.status(500).json({ message: err.message })
     }
