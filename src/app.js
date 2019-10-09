@@ -1,22 +1,13 @@
 require('dotenv').config({ path: '.env' });
 
-
 const serverless = require('serverless-http');
 const path = require('path');
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
+const cors = require('cors')
 const isDev = process.env.NODE_ENV !== 'production'
-
-// const passport = require("passport");
-// const passportJWT = require("passport-jwt");
-// const ExtractJwt = passportJWT.ExtractJwt;
-// const JwtStrategy = passportJWT.Strategy;
-// // Configure its options
-// const jwtOptions = {};
-// jwtOptions.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt");
-// jwtOptions.secretOrKey = process.env.JWTSECRET;
 
 const { uri } = require('./config/serverSetup')
 const initAdminUser = require('./utils/initAdminUser')
@@ -26,48 +17,47 @@ const routeError = require('./routes/errorRoute')
 require('./middleware/passport');
 
 // Connect to our Database and handle any bad connections
-mongoose.connect(uri, { useNewUrlParser: true })
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
 mongoose.connection.on('error', (err) => {
   console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
 });
 
+const whitelist = [
+    'https://www.tracysu.com', 
+    'https://tracy-blog.herokuapp.com',
+    'https://node-express-api.netlify.com'
+]
+  
+const corsOptions = {
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1) {
+        callback(null, true)
+      } else {
+        callback(new Error(`Not allowed by CORS origin: ${origin}`))
+      }
+    },
+    optionsSuccessStatus: 200,
+    credentials: true
+}
+
+
 // express code here
 const app = express()
-  
-// if (!isDev) { // PROD setup
-//   initAdminUser()
-//   console.log('production mode on')
-// }
 
-// const strategy = new JwtStrategy(jwtOptions, (jwt_payload, next) => {
-//   console.log('payload received', jwt_payload);
-
-//   if (jwt_payload) {
-//       // The following will ensure that all routes using 
-//       // passport.authenticate have a req.user._id, req.user.userName, req.user.fullName & req.user.role values 
-//       // that matches the request payload data
-//       next(null, jwt_payload); 
-//   } else {
-//       next(null, false);
-//   }
-// });
-
-// // tell passport to use our "strategy"
-// passport.use(strategy);
-
-// add passport as application-level middleware
-// app.use(passport.initialize());
+//set up cors
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
+app.use(cors(corsOptions))
+app.options('*', cors(corsOptions));
 
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 // api
 if (!isDev) { // PROD setup
-  app.use('/.netlify/functions/app', route)
+  app.use('/.netlify/functions/app', route) // this is the required setup by netlify
 } else {
   app.use(route)
 }
