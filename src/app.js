@@ -14,6 +14,7 @@ const initAdminUser = require('./utils/initAdminUser')
 const route = require('./routes')
 const routeNotFound = require('./routes/notFound')
 const routeError = require('./routes/errorRoute')
+const swagger = require('./swagger')
 require('./middleware/passport');
 
 // Connect to our Database and handle any bad connections
@@ -37,10 +38,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
-
 // api
-app.use(basePath, route)
+app.use(route)
+
+// swagger
+app.use(swagger)
 
 // catch 404 and forward to error handler
 app.use(routeNotFound);
