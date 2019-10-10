@@ -14,6 +14,7 @@ const initAdminUser = require('./utils/initAdminUser')
 const route = require('./routes')
 const routeNotFound = require('./routes/notFound')
 const routeError = require('./routes/errorRoute')
+const swagger = require('./swagger')
 require('./middleware/passport');
 
 // Connect to our Database and handle any bad connections
@@ -25,6 +26,10 @@ mongoose.connection.on('error', (err) => {
 
 // express code here
 const app = express()
+const basePath = isDev ? '/' : '/.netlify/functions/app'
+
+// serves up static files from the public folder. Anything in public/ will just be served up as the file it is
+app.use(express.static(path.join(__dirname, '../public')));
 
 //set up cors
 app.use(cors())
@@ -33,14 +38,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
+// app.get('/', (req, res) => res.sendFile(path.join(__dirname, '../index.html')));
 
 // api
-if (!isDev) { // PROD setup
-  app.use('/.netlify/functions/app', route) // this is the required setup by netlify
-} else {
-  app.use(route)
-}
+app.use(basePath, route)
+
+// swagger
+app.use(basePath, swagger)
 
 // catch 404 and forward to error handler
 app.use(routeNotFound);
