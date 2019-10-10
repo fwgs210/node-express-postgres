@@ -6,8 +6,8 @@
   "author": "Tracy Su",
   "license": "ISC",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon start.js",
-    "start": "cross-env NODE_ENV=production node start.js",
+    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "start": "cross-env NODE_ENV=production node index.js",
     "build": "netlify-lambda build src"
   },
   "dependencies": {
