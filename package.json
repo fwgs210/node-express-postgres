@@ -8,7 +8,9 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "start": "cross-env NODE_ENV=production node index.js",
-    "build": "netlify-lambda build src"
+    "build": "netlify-lambda build src",
+    "sample-data": "node ./data/load-sample-data.js",
+    "delete-sample-data": "node ./data/load-sample-data.js --delete"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -19,6 +21,7 @@
     "dotenv": "^8.1.0",
     "errorhandler": "^1.5.1",
     "express": "^4.15.2",
+    "express-validator": "^6.2.0",
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.0.8",
     "netlify-lambda": "^1.6.3",

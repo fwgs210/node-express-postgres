@@ -18,34 +18,23 @@ router.route('/password-reset').post(authController.reset);
 
 router.route('/posts')
     .get(postController.findAllPosts)
+    
+router.route('/posts/create')
     .post(passport.authenticate('jwt', {session: false}), async (req, res) => {
-        const { content, tags, categories, title, featureImg } = req.body
-        const { _id, username } = req.token.userInfo
-        const sanitizedTitle = title.split(' ').join('-')
-        const slug = await Post.findOne({ slug: `/${username}/${sanitizedTitle}` }) ? `/${username}/${sanitizedTitle}-1` : `/${username}/${sanitizedTitle}`
-        const newPost = new Post({
-            author: {
-                user: username,
-                _id
-            },
-            featureImg,
-            title,
-            slug,
-            content,
-            publishDate: new Date(),
-            tags,
-            categories
-        })
 
-        newPost
-            .save()
-            .then(async post => {
-                await User.findByIdAndUpdate(_id, { $push: { posts: newPost } })
-                res.status(201).json({ payload: post })
+        try {
+            const newPost = await new Post({
+                ...req.body,
+                author: req.user._id,
+                publishDate: new Date()
             })
-            .catch(err => {
-                res.status(500).json({ message: err.message })
-            })
+            const savedPost = await newPost.save()
+            await User.findByIdAndUpdate(req.user._id, { $push: { posts: savedPost } })
+            res.status(200).json({ message: "Post created." })
+    
+        } catch (err) {
+            res.status(500).json({ message: err.message })
+        }
     })
 
 router.route('/posts/search')
@@ -182,7 +171,7 @@ router.route('/posts/:id').delete(auth, (req, res) => {
 })
 
 // // admin API
-router.route('/users').get(verifyAdmin, (req, res) => {
+router.route('/users').get((req, res) => {
     User.find().select({ password: 0 })
         .then(doc => {
             if (doc) {
