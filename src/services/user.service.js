@@ -6,8 +6,11 @@ const findUserByIdAndUpdatePassword = (id, password) => User.findByIdAndUpdate(i
 
 const findUserById = id => User.findById(id)
 
+const updateUserPosts = (id, newPost) => User.findByIdAndUpdate(id, { $push: { posts: newPost } })
+
 module.exports = {
     findUserByEmail,
     findUserById,
-    findUserByIdAndUpdatePassword
+    findUserByIdAndUpdatePassword,
+    updateUserPosts
 }

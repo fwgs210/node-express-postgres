@@ -6,7 +6,6 @@ const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
-// const expressValidator = require('express-validator');
 const cors = require('cors')
 const isDev = process.env.NODE_ENV !== 'production'
 
@@ -36,7 +35,6 @@ app.use(cors())
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use(expressValidator());
 app.use(cookieParser());
 
 // api

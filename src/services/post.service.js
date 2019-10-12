@@ -1,6 +1,23 @@
 const Post = require('../models/post')
 
-const findAllPosts = () => Post.find()
+const findAllPosts = async (req, res) => {
+    const page = req.query.page || 1;
+    const limit = req.query.limit || 10;
+    const skip = (page * limit) - limit;
+
+    // 1. Query the database for a list of all stores
+    const posts = await Post
+        .find()
+        .skip(skip)
+        .limit(Number(limit))
+        .sort({ publishDate: 'desc' });
+
+    if (!posts.length && skip) {
+        return res.status(400).json({ message: `Hey! You asked for page ${page}. But that doesn't exist.` })
+    }
+
+    return posts;
+}
 
 const searchPosts = async query => {
     const posts = await Post
@@ -22,7 +39,17 @@ const searchPosts = async query => {
     return posts
 }
 
+const addPost = async req => {
+    const newPost = await new Post({
+        ...req.body,
+        author: req.user._id,
+        publishDate: new Date()
+    })
+    return await newPost.save()
+}
+
 module.exports = {
     findAllPosts,
-    searchPosts
+    searchPosts,
+    addPost
 }

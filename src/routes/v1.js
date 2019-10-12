@@ -20,22 +20,11 @@ router.route('/posts')
     .get(postController.findAllPosts)
     
 router.route('/posts/create')
-    .post(passport.authenticate('jwt', {session: false}), async (req, res) => {
-
-        try {
-            const newPost = await new Post({
-                ...req.body,
-                author: req.user._id,
-                publishDate: new Date()
-            })
-            const savedPost = await newPost.save()
-            await User.findByIdAndUpdate(req.user._id, { $push: { posts: savedPost } })
-            res.status(200).json({ message: "Post created." })
-    
-        } catch (err) {
-            res.status(500).json({ message: err.message })
-        }
-    })
+    .post(
+        passport.authenticate('jwt', {session: false}), 
+        postController.addCategory,
+        postController.createNewPost
+    )
 
 router.route('/posts/search')
     .get(postController.searchPosts)

@@ -2,6 +2,7 @@ const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
 const Post = require('./post')
 const Schema = mongoose.Schema
+mongoose.Promise = global.Promise; // for use async await
 
 const userSchema = new Schema({
     _id: Schema.Types.ObjectId,
