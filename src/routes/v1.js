@@ -5,6 +5,7 @@ const passport    = require('passport');
 const router = express.Router()
 const User = require('../models/user')
 const Post = require('../models/post')
+const Catetory = require('../models/category')
 const postController = require('../controllers/postController')
 const authController = require('../controllers/authController')
 const auth = require('../middleware/auth')
@@ -164,7 +165,7 @@ router.route('/users').get((req, res) => {
     User.find().select({ password: 0 })
         .then(doc => {
             if (doc) {
-                res.status(200).json({ users: doc })
+                res.status(200).json({ data: doc })
             } else {
                 res.status(203).json({ message: 'No user found' })
             }
