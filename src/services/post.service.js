@@ -13,7 +13,7 @@ const findAllPosts = async (req, res) => {
         .sort({ publishDate: 'desc' });
 
     if (!posts.length && skip) {
-        return res.status(400).json({ message: `Hey! You asked for page ${page}. But that doesn't exist.` })
+        res.status(400).json({ message: `Hey! You asked for page ${page}. But that doesn't exist.` })
     }
 
     return posts;

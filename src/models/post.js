@@ -18,7 +18,7 @@ const postSchema = new Schema({
 })
 
 function autopopulate(next) {
-    this.populate('author', '-password -posts').populate('category');
+    this.populate('author', '-password -posts -email -role').populate('category');
     next();
 }
   
