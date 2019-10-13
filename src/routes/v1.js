@@ -8,7 +8,7 @@ const Post = require('../models/post')
 const Catetory = require('../models/category')
 const postController = require('../controllers/postController')
 const authController = require('../controllers/authController')
-const auth = require('../middleware/auth')
+const jwt = require('../middleware/auth')
 const verifyAdmin = require('../middleware/verifyAdmin')
 const { sign } = require('../utils/tokenService')
 
@@ -30,32 +30,21 @@ router.route('/posts/create')
 router.route('/posts/search')
     .get(postController.searchPosts)
 
-router.route('/posts/update/:id').put(auth, (req, res) => {
-    const { content, tags, categories, title, featureImg } = req.body
+router.route('/posts/edit/:id').put(
+    passport.authenticate('jwt', {session: false}), 
+    postController.editPost
+)
 
-    Post.findByIdAndUpdate(req.params.id, {
-        featureImg,
-        title,
-        categories,
-        tags,
-        content
-    }).then(doc => {
-        res.status(200).json({ updatedPost: doc })
-    }).catch(err => {
-        res.status(500).json({ message: err.message })
-    })
-})
-
-router.route('/posts/:user/:postTitle').get((req, res) => {
-    Post
-        .findOne({ slug: `/${req.params.user}/${req.params.postTitle}` })
-        .then(post => {
-            res.status(200).json({ payload: post, message: 'Post found.' })
-        })
-        .catch(err => {
-            res.status(500).json({ message: err.message })
-        })
-})
+// router.route('/posts/:user/:postTitle').get((req, res) => {
+//     Post
+//         .findOne({ slug: `/${req.params.user}/${req.params.postTitle}` })
+//         .then(post => {
+//             res.status(200).json({ payload: post, message: 'Post found.' })
+//         })
+//         .catch(err => {
+//             res.status(500).json({ message: err.message })
+//         })
+// })
 
 router.route('/posts/:user').get((req, res) => {
     User
@@ -74,7 +63,10 @@ router.route('/posts/:user').get((req, res) => {
 })
 
 // // change password
-router.route('/user/change-password').post(auth, authController.updateUserPassword)
+router.route('/user/change-password').post(
+    passport.authenticate('jwt', {session: false}), 
+    authController.updateUserPassword
+)
 
 // new user
 router.route('/register').post(async (req, res) => {
@@ -102,7 +94,7 @@ router.route('/register').post(async (req, res) => {
 })
 
 // // SSO login 
-router.route('/login/sso').post(auth, (req, res) => {
+router.route('/login/sso').post( (req, res) => {
     const { username } = req.token.userInfo
     User.findOne({ username })
         .then(doc => {
@@ -118,37 +110,12 @@ router.route('/login/sso').post(auth, (req, res) => {
 })
 
 // login 
-router.route('/login').post(async (req, res) => {
-    const { username, password } = req.body;
-    const user = await User.findOne({ username })
+router.route('/login').post(
+    jwt.login,
+    authController.login
+)
 
-    if (user) {
-        const match = await user.comparePassword(password)
-
-        if (match || password === user.password) {
-            const token = sign({ userInfo: user }); // user token structure
-            res.status(200).json({ user: { _id: user._id, role: user.role, username: user.username }, token: token })
-        } else {
-            res.status(203).json({ message: 'Authentication failed' })
-        }
-    } else {
-        res.status(203).json({ message: 'User not found' })
-    }
-    // User.findOne({ username })
-    //     .then(doc => {
-    //         if (doc && user.comparePassword(password)) {
-    //             const token = sign({ userInfo: doc }); // user token structure
-    //             res.status(200).json({ user: { _id: doc._id, profileImg: doc.profileImg, role: doc.role, username: doc.username }, token: token })
-    //         } else {
-    //             res.status(203).json({ message: 'Authentication failed' })
-    //         }
-    //     })
-    //     .catch(err => {
-    //         res.status(500).json({ message: err.message })
-    //     })
-})
-
-router.route('/posts/:id').delete(auth, (req, res) => {
+router.route('/posts/:id').delete( (req, res) => {
     const { id } = req.params
 
     Post.findByIdAndRemove(id)

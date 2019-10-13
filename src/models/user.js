@@ -15,7 +15,9 @@ const userSchema = new Schema({
         enum: ['member', 'editor', 'administrator'],
         default: 'member'
     },
-    posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }]
+    posts: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 })
 
 // before a new user is saved

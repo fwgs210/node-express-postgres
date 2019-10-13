@@ -71,3 +71,17 @@ module.exports.updateUserPassword = async (req, res) => {
         res.status(500).json({ message: err.message })
     }
 }
+
+module.exports.login = async (req, res) => {
+    try {
+        res.status(200).json({
+            message: "Login success",
+            data: {
+                token: req.token,
+                refreshToken: req.refreshToken
+            }
+        })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+}

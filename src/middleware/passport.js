@@ -5,31 +5,46 @@ const userService = require('../services/user.service')
 
 const ExtractJWT = passportJWT.ExtractJwt;
 
-// const LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require('passport-local').Strategy;
 const JWTStrategy   = passportJWT.Strategy;
+const { sign, signRefreshToken } = require('../utils/tokenService')
 
-// passport.use(new LocalStrategy({
-//         usernameField: 'email',
-//         passwordField: 'password'
-//     },
-//     function (email, password, cb) {
+passport.use(new LocalStrategy({
+        usernameField: 'username',
+        passwordField: 'password'
+    },
+    async (username, password, next) => {
+        //Assume there is a DB module pproviding a global UserModel
+        try {
+            const user = await userService.login(username, password);
+            if (!user) {
+                return next(null, false, { message: 'Incorrect email or password.' });
+            }
+            const token = sign({ 
+                id: user._id,
+                username: user.username,
+                email: user.email
+            });
+            
+            const refreshToken =  signRefreshToken({ 
+                id: user._id,
+                username: user.username,
+                email: user.email
+            });
 
-//         //Assume there is a DB module pproviding a global UserModel
-//         return UserModel.findOne({email, password})
-//             .then(user => {
-//                 if (!user) {
-//                     return cb(null, false, {message: 'Incorrect email or password.'});
-//                 }
-
-//                 return cb(null, user, {
-//                     message: 'Logged In Successfully'
-//                 });
-//             })
-//             .catch(err => {
-//                 return cb(err);
-//             });
-//     }
-// ));
+            const tokens = {
+                token,
+                refreshToken
+            }
+            return next(null, tokens, {
+                message: 'Logged In Successfully'
+            });
+        }
+        catch (err) {
+            return next(err);
+        }
+    }
+));
 
 passport.use(new JWTStrategy({
         jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),

@@ -48,8 +48,14 @@ const addPost = async req => {
     return await newPost.save()
 }
 
+const findPostById = id => Post.findById(id)
+
+const findPostByIdAndUpdate = (id, query) => Post.findById(id, query)
+
 module.exports = {
     findAllPosts,
     searchPosts,
-    addPost
+    addPost,
+    findPostById,
+    findPostByIdAndUpdate
 }
