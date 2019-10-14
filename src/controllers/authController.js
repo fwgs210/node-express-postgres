@@ -77,8 +77,9 @@ module.exports.login = async (req, res) => {
         res.status(200).json({
             message: "Login success",
             data: {
+                user: req.user,
                 token: req.token,
-                refreshToken: req.refreshToken
+                // refreshToken: req.refreshToken
             }
         })
     } catch (err) {
