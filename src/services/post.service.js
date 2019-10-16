@@ -1,4 +1,5 @@
-const Post = require('../models/post')
+const mongoose = require('mongoose');
+const Post = mongoose.model('Post');
 
 const findAllPosts = async (req, res) => {
     const page = req.query.page || 1;
@@ -52,10 +53,16 @@ const findPostById = id => Post.findById(id)
 
 const findPostByIdAndUpdate = (id, query) => Post.findById(id, query)
 
+const deletePostById = id => Post.findByIdAndRemove(id)
+
+const deleteUserPosts = id => Post.deleteMany({ 'author._id': id })
+
 module.exports = {
     findAllPosts,
     searchPosts,
     addPost,
     findPostById,
-    findPostByIdAndUpdate
+    findPostByIdAndUpdate,
+    deleteUserPosts,
+    deletePostById
 }

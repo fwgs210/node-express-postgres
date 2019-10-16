@@ -1,4 +1,5 @@
-const User = require('../models/user')
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
 
 const findUserByEmail = email => User.findOne({ email })
 
@@ -17,10 +18,21 @@ const findUserById = id => User.findById(id)
 
 const updateUserPosts = (id, newPost) => User.findByIdAndUpdate(id, { $push: { posts: newPost } })
 
+const registerUser = async body => {
+    const {
+        username, password, email
+    } = body
+
+    const user = new User({ username, password, email })
+
+    return await user.save()
+}
+
 module.exports = {
     findUserByEmail,
     findUserById,
     findUserByIdAndUpdatePassword,
     updateUserPosts,
+    registerUser,
     login
 }

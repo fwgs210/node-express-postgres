@@ -1,4 +1,5 @@
-const Category = require('../models/category')
+const mongoose = require('mongoose');
+const Category = mongoose.model('Category');
 
 const findACategory = categoryName => Category.findOne({ title: categoryName})
 

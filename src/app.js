@@ -4,13 +4,14 @@ const serverless = require('serverless-http');
 const path = require('path');
 const express = require('express')
 const mongoose = require('mongoose')
+mongoose.set('useCreateIndex', true);
+mongoose.set('useFindAndModify', false)
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
 const isDev = process.env.NODE_ENV !== 'production'
 
 const { uri } = require('./config/serverSetup')
-const initAdminUser = require('./utils/initAdminUser')
 const route = require('./routes')
 const routeNotFound = require('./routes/notFound')
 const routeError = require('./routes/errorRoute')

@@ -1,10 +1,12 @@
 
 const mongoose = require('mongoose');
+const mongodbErrorHandler = require('mongoose-mongodb-errors');
+const Schema = mongoose.Schema
 mongoose.Promise = global.Promise; // for use async await
 
-const categorySchema = new mongoose.Schema({
+const categorySchema = new Schema({
   posts: [{
-    type: mongoose.Schema.ObjectId,
+    type: Schema.Types.ObjectId,
     ref: 'Post',
     required: false
   }],
@@ -20,6 +22,7 @@ function autopopulate(next) {
 }
 
 categorySchema.pre('find', autopopulate);
+categorySchema.plugin(mongodbErrorHandler);
 
 const Category = mongoose.model('Category', categorySchema)
 module.exports = Category

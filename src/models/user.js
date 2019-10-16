@@ -1,14 +1,31 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcryptjs')
-const Post = require('./post')
+const validator = require('validator');
+const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const Schema = mongoose.Schema
 mongoose.Promise = global.Promise; // for use async await
 
 const userSchema = new Schema({
-    _id: Schema.Types.ObjectId,
-    username: { type: String, required: true, unique: true },
-    password: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    username: { 
+        type: String, 
+        required: 'Please Supply an username', 
+        unique: true, 
+        lowercase: true, 
+        trim: true 
+    },
+    password: { 
+        type: String, 
+        required: 'Please Supply a password',
+        trim: true
+    },
+    email: { 
+        type: String, 
+        unique: true, 
+        lowercase: true, 
+        trim: true,
+        validate: [validator.isEmail, 'Invalid Email Address'],
+        required: 'Please Supply an email address'
+    },
     role: {
         type: String,
         required: true,
@@ -44,13 +61,22 @@ userSchema.methods.comparePassword = function(password) {
   return bcrypt.compare(password, this.password);
 };
 
-function autopopulate(next) {
-    this.populate('posts');
-    next();
-  }
+userSchema.post('save', function (error, doc, next) {
+    if (error.name === 'MongoError' && error.code === 11000) {
+      next(new Error('There was a duplicate key error'));
+    } else {
+      next();
+    }
+});
 
-userSchema.pre('findOne', autopopulate);
-userSchema.pre('findById', autopopulate);
+// function autopopulate(next) {
+//     this.populate('posts');
+//     next();
+//   }
+
+// userSchema.pre('findOne', autopopulate);
+// userSchema.pre('findById', autopopulate);
+userSchema.plugin(mongodbErrorHandler);
 
 const User = mongoose.model('User', userSchema)
 

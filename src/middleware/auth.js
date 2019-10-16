@@ -8,9 +8,10 @@ module.exports.login = async (req, res, next) => {
             const decoded = await verify(bearerToken)
             req.token = bearerToken
             req.user = {
-                id: decoded.id,
+                _id: decoded._id,
                 username: decoded.username,
-                email: decoded.email
+                email: decoded.email,
+                role: decoded.role
             }
             return next()
         }
@@ -30,23 +31,26 @@ module.exports.login = async (req, res, next) => {
             })
         }
         const token = await sign({ 
-            id: user._id,
+            _id: user._id,
             username: user.username,
-            email: user.email
+            email: user.email,
+            role: user.role
         });
         
         const refreshToken = await signRefreshToken({ 
-            id: user._id,
+            _id: user._id,
             username: user.username,
-            email: user.email
+            email: user.email,
+            role: user.role
         });
 
         req.token = token
         req.refreshToken = refreshToken
         req.user = {
-            id: user._id,
+            _id: user._id,
             username: user.username,
-            email: user.email
+            email: user.email,
+            role: user.role
         }
 
         next()
@@ -59,25 +63,20 @@ module.exports.login = async (req, res, next) => {
     }
 }
 
-// module.exports = async (req, res, next) => {
-//     const bearerHeader = req.headers['authorization'];
-//     if (!bearerHeader) {
-//         res.status(403).json({
-//             message: "Unauthorized!"
-//         })
-//         return null
-//     }
-
-//     try {
-//         const bearerToken = bearerHeader.split(' ')[1]
-//         const decoded = await verify(bearerToken)
-//         req.token = decoded
-//         next()
-//     } catch (e) {
-//         res.status(403).json({
-//             message: "Unauthorized!",
-//             error: e
-//         })
-//         return null
-//     }
-// }
+module.exports.authorization = async (req, res, next) => { // this always has to combine with login middleware
+    try {
+        if (req.user.role !== 'administrator') {
+            return res.status(403).json({
+                message: `Unauthorized role: ${req.user.role}`
+            })
+        } else {
+            next()
+        }
+    } catch (e) {
+        res.status(403).json({
+            message: "Unauthorized!",
+            error: e
+        })
+        return null
+    }
+}

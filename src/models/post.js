@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const mongodbErrorHandler = require('mongoose-mongodb-errors');
 const Schema = mongoose.Schema
 mongoose.Promise = global.Promise; // for use async await
 
@@ -32,8 +33,23 @@ postSchema.index({
 
 postSchema.pre('find', autopopulate);
 postSchema.pre('findOne', autopopulate);
+postSchema.post('save', (error, doc, next) => {
+    if (error.name === 'MongoError' && error.code === 11000) {
+      next(new Error('There was a duplicate key error'));
+    } else {
+      next();
+    }
+});
 
+postSchema.statics.getTagsList = function() {
+    return this.aggregate([
+      { $unwind: '$tags' },
+      { $group: { name: '$tags', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+};
 
+postSchema.plugin(mongodbErrorHandler);
 const Post = mongoose.model('Post', postSchema)
 
 module.exports = Post

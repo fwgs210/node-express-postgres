@@ -21,13 +21,15 @@ module.exports.reset = async(req, res) => {
             const {
                 _id,
                 username,
-                email
+                email,
+                role
             } = user
 
             const token = sign({ 
-                id: _id,
+                _id,
                 username,
-                email
+                email,
+                role
              });       
             const resetURL = `http://${req.headers.host}/reset-password/${token}`
 
@@ -61,12 +63,12 @@ module.exports.reset = async(req, res) => {
 module.exports.updateUserPassword = async (req, res) => {
     try {
         const { newPassword } = req.body;
-        const { _id } = req.token
+        const { _id } = req.user
         const hashPass = await bcrypt.hash(newPassword, 10)
     
         const updatedUser = await userService.findUserByIdAndUpdatePassword(_id, hashPass)
         const newToken = await sign(updatedUser)
-        res.status(200).json({ message: 'Password updated.', token: newToken })
+        res.status(200).json({ message: 'Password updated.', data: { token: newToken } })
     } catch (err) {
         res.status(500).json({ message: err.message })
     }
@@ -82,6 +84,19 @@ module.exports.login = async (req, res) => {
                 // refreshToken: req.refreshToken
             }
         })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+}
+
+module.exports.register = async (req, res, next) => {
+    try {
+        const newUser = await userService.registerUser(req.body)
+        if(!newUser) {
+            return res.status(422).json({ message: "Username or email already exists." })
+        }
+
+        next()
     } catch (err) {
         res.status(500).json({ message: err.message })
     }
