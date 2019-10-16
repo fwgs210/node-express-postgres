@@ -1,4 +1,4 @@
-const Post = require('../models/Post')
+const Post = require('../models/post')
 
 const findAllPosts = async (req, res) => {
     const page = req.query.page || 1;

@@ -1,7 +1,7 @@
 const postService = require('../services/post.service')
 const userService = require('../services/user.service')
 const categoryService = require('../services/category.service')
-const Post = require('../models/Post')
+const Post = require('../models/post')
 
 module.exports.findAllPosts = async (req, res) => {
     try {
