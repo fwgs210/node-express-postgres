@@ -1,9 +1,9 @@
 const express = require('express')
 const passport    = require('passport');
 const router = express.Router()
-require('../models/Category')
-require('../models/User')
-require('../models/Post')
+const Category = require('../models/Category')
+const User = require('../models/User')
+const Post = require('../models/Post')
 const postController = require('../controllers/postController')
 const adminController = require('../controllers/adminController')
 const authController = require('../controllers/authController')
