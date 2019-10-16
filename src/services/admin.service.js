@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const User = mongoose.model('User');
+const User = require('../models/User')
 
 const findAllusers = () => User.find().select({ password: 0 })
 

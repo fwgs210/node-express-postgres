@@ -1,8 +1,7 @@
 const postService = require('../services/post.service')
 const userService = require('../services/user.service')
 const categoryService = require('../services/category.service')
-const mongoose = require('mongoose');
-const Post = mongoose.model('Post');
+const Post = require('../models/Post')
 
 module.exports.findAllPosts = async (req, res) => {
     try {

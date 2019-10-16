@@ -1,5 +1,4 @@
-const mongoose = require('mongoose');
-const Post = mongoose.model('Post');
+const Post = require('../models/Post')
 
 const findAllPosts = async (req, res) => {
     const page = req.query.page || 1;
