@@ -4,6 +4,22 @@
     ],
     "routes": [
         {
+            "src": "/documentation/swagger-ui-bundle.js",
+            "dest": "/documentation/swagger-ui-bundle.js"
+        },
+        {
+            "src": "/documentation/swagger-ui-init.js",
+            "dest": "/documentation/swagger-ui-init.js"
+        },
+        {
+            "src": "/documentation/swagger-ui-standalone-preset.js",
+            "dest": "/documentation/swagger-ui-standalone-preset.js"
+        },
+        {
+            "src": "/documentation/swagger-ui.css",
+            "dest": "/documentation/swagger-ui.css"
+        },
+        {
             "src": "/(.*)",
             "dest": "/"
         }
