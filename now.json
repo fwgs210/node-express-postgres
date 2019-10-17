@@ -3,7 +3,6 @@
         { "src": "index.js", "use": "@now/node" }
     ],
     "routes": [
-        { "src": "/documentation/(.*)", "dest": "/public" },
         {
             "src": "/(.*)",
             "dest": "/"
