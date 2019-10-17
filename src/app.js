@@ -15,7 +15,7 @@ const { uri } = require('./config/serverSetup')
 const route = require('./routes')
 const routeNotFound = require('./routes/notFound')
 const routeError = require('./routes/errorRoute')
-const swagger = require('./swagger')
+const swagger = require('./swaggerApi')
 require('./middleware/passport');
 
 // Connect to our Database and handle any bad connections
