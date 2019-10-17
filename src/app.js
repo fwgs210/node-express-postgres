@@ -10,12 +10,13 @@ const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
 const isDev = process.env.NODE_ENV !== 'production'
+const swaggerUi = require('swagger-ui-express');
+const YAML = require('yamljs');
 
 const { uri } = require('./config/serverSetup')
 const route = require('./routes')
 const routeNotFound = require('./routes/notFound')
 const routeError = require('./routes/errorRoute')
-const swagger = require('./swaggerApi')
 require('./middleware/passport');
 
 // Connect to our Database and handle any bad connections
@@ -41,8 +42,12 @@ app.use(cookieParser());
 // api
 app.use(route)
 
-// swagger
-app.use(swagger)
+// Setup Swagger
+const swaggerDocument = YAML.load('./public/documentation.yaml');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+// // swagger
+// app.use(swagger)
 
 // catch 404 and forward to error handler
 app.use(routeNotFound);
