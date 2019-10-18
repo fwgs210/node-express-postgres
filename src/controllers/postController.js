@@ -3,6 +3,15 @@ const userService = require('../services/user.service')
 const categoryService = require('../services/category.service')
 const Post = require('../models/post')
 
+module.exports.findPopularPosts =  async (req, res) => {
+    try {
+        const posts = await postService.getPopularPosts()
+        res.status(200).json({ data: { posts } })
+    } catch (err) {
+        res.status(500).json({ message: err.message })
+    }
+}
+
 module.exports.findAllPosts = async (req, res) => {
     try {
         const posts = await postService.findAllPosts(req, res)

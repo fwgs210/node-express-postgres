@@ -21,6 +21,27 @@ const postSchema = new Schema({
     toObject: { virtuals: true },
 })
 
+postSchema.statics.getTopPosts = function() {
+    return this.aggregate([
+      // Lookup Stores and populate their reviews
+      { $lookup: { from: 'comments', localField: '_id', foreignField: 'postId', as: 'reviews' }},
+      // filter for only items that have 2 or more reviews
+      { $match: { 'reviews.1': { $exists: true } } },
+      // Add the average reviews field
+      { $project: {
+        featureImg: '$$ROOT.featureImg',
+        title: '$$ROOT.title',
+        reviews: '$$ROOT.reviews',
+        slug: '$$ROOT.slug',
+        averageRating: { $avg: '$reviews.rating' }
+      } },
+      // sort it by our new field, highest reviews first
+      { $sort: { averageRating: -1 }},
+      // limit to at most 10
+      { $limit: 10 }
+    ]);
+  }
+
 // find reviews where the stores _id property === reviews store property
 postSchema.virtual('comments', {
     ref: 'Comment', // what model to link?

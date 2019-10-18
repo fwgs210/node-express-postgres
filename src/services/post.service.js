@@ -57,6 +57,8 @@ const deletePostById = id => Post.findByIdAndRemove(id)
 
 const deleteUserPosts = id => Post.deleteMany({ 'author._id': id })
 
+const getPopularPosts = () => Post.getTopPosts()
+
 module.exports = {
     findAllPosts,
     searchPosts,
@@ -64,5 +66,6 @@ module.exports = {
     findPostById,
     findPostByIdAndUpdate,
     deleteUserPosts,
-    deletePostById
+    deletePostById,
+    getPopularPosts
 }

@@ -15,6 +15,9 @@ router.route('/')
 router.route('/posts')
     .get(postController.findAllPosts)
 
+router.route('/posts/top')
+    .get(postController.findPopularPosts)
+
 router.route('/posts/search')
     .get(postController.searchPosts)
     
