@@ -6,6 +6,10 @@ const express = require('express')
 const mongoose = require('mongoose')
 mongoose.set('useCreateIndex', true);
 mongoose.set('useFindAndModify', false)
+require('./models/comment')
+require('./models/user')
+require('./models/post')
+require('./models/category')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
 const cors = require('cors')

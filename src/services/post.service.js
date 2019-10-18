@@ -40,6 +40,7 @@ const searchPosts = async query => {
 }
 
 const addPost = async req => {
+    req.body.slug = req.body.slug.startsWith('/') ? req.body.slug : `/${req.body.slug}`
     const newPost = await new Post({
         ...req.body,
         author: req.user._id,

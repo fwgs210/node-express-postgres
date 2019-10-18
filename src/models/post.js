@@ -14,12 +14,22 @@ const postSchema = new Schema({
     slug: { type: String, required: true, unique: true },
     content: { type: String, required: true },
     publishDate: { type: String, required: true },
-    tags: { type: Array, required: false },
+    tags: [String],
     category: { type: Schema.Types.ObjectId, ref: 'Category', required: 'your post must have a category' }
+}, {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
 })
 
+// find reviews where the stores _id property === reviews store property
+postSchema.virtual('comments', {
+    ref: 'Comment', // what model to link?
+    localField: '_id', // which field on the store?
+    foreignField: 'postId' // which field on the review?
+});
+
 function autopopulate(next) {
-    this.populate('author', '-password -posts -email -role').populate('category');
+    this.populate('author', '-password -posts -email -role').populate('category').populate('comments');
     next();
 }
   
