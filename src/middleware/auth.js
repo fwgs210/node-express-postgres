@@ -8,7 +8,7 @@ module.exports.login = async (req, res, next) => {
             const decoded = await verify(bearerToken)
             req.token = bearerToken
             req.user = {
-                _id: decoded._id,
+                id: decoded.id,
                 username: decoded.username,
                 email: decoded.email,
                 role: decoded.role
@@ -23,22 +23,24 @@ module.exports.login = async (req, res, next) => {
                 message: "Please enter your password and username"
             })
         }
-
+        
         const user = await userService.login(username, password);
+        
         if (!user) {
             return res.status(403).json({
-                message: "User not exists!"
+                message: "User not exists or password wrong!"
             })
         }
+
         const token = await sign({ 
-            _id: user._id,
+            id: user.id,
             username: user.username,
             email: user.email,
             role: user.role
         });
         
         const refreshToken = await signRefreshToken({ 
-            _id: user._id,
+            id: user.id,
             username: user.username,
             email: user.email,
             role: user.role
@@ -47,7 +49,7 @@ module.exports.login = async (req, res, next) => {
         req.token = token
         req.refreshToken = refreshToken
         req.user = {
-            _id: user._id,
+            id: user.id,
             username: user.username,
             email: user.email,
             role: user.role

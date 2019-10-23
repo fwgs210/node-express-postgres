@@ -1,10 +1,20 @@
 const User = require('../models/user')
+const db = require('../../models')
+const bcrypt = require('bcryptjs')
+
+const comparePassword = (password, hash) => bcrypt.compare(password, hash)
 
 const findUserByEmail = email => User.findOne({ email })
 
 const login = async (username, password) => {
-    const user = await User.findOne({ username })
-    if(user && user.comparePassword(password)) {
+    const user = await db.User.findOne({
+        where: {
+            username: username
+        }
+    })
+    const isMatch = await comparePassword(password, user.password)
+
+    if(user && isMatch) {
         return user
     }
 
@@ -18,13 +28,11 @@ const findUserById = id => User.findById(id)
 const updateUserPosts = (id, newPost) => User.findByIdAndUpdate(id, { $push: { posts: newPost } })
 
 const registerUser = async body => {
-    const {
-        username, password, email
-    } = body
 
-    const user = new User({ username, password, email })
+    // return await user.save()
+    const user = await db.User.create({ username: body.username, password: body.password, email:body.email, role_level: 1 })
 
-    return await user.save()
+    return user
 }
 
 module.exports = {
