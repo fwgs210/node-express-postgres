@@ -49,12 +49,7 @@ module.exports = (sequelize, Datatypes)=>{
         }
     },
     {
-        underscored:true,
-        instanceMethods: {
-            comparePassword : function(candidatePassword) {
-                return bcrypt.compare(candidatePassword, this.getDataValue('password'))
-            },
-        }
+        underscored:true
     });
 
     // Method 3 via the direct method
