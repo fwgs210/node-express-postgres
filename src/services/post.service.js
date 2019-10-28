@@ -68,7 +68,17 @@ const deletePostById = id => db.Post.destroy({ where: { id }})
 
 const deleteUserPosts = id => db.Post.destroy({ where: { user_id: id }})
 
-const getPopularPosts = () => db.Post.findAll().getComments()
+const getPopularPosts = async () => {
+    query = `SELECT Posts.OrderID, Posts.CustomerName
+    FROM Orders
+    INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID; LIMIT 5`
+
+    const posts = await db.sequelize.query(query, {
+        type: db.sequelize.QueryTypes.SELECT
+    });
+
+    return posts
+}
 
 module.exports = {
     findAllPosts,
