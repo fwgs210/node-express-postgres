@@ -1,5 +1,4 @@
 const postService = require('../services/post.service')
-const Post = require('../models/post')
 
 module.exports.findPopularPosts =  async (req, res) => {
     try {
@@ -26,9 +25,7 @@ module.exports.findUserPosts = async (req, res) => {
                 message: "Token not match with user ID!"
             })
         }
-        const posts = await Post.find({
-            id: { $in: req.user.posts }
-        });
+        const posts = await postService.findPostByUserId(req.params.userId)
         res.status(200).json({ data: { posts } })
     } catch(err) {
         res.status(500).json({ message: err.message })

@@ -53,10 +53,20 @@ module.exports = (sequelize, Datatypes)=>{
     });
 
     Post.associate = (models) => {
-        models.Post.belongsTo(models.User);
+        models.Post.belongsTo(models.User, {
+            as: 'author',
+            foreignKey: 'user_id'
+        });
         models.Post.belongsTo(models.Category);
         models.User.hasMany(models.Comment, { as: 'comments' });
     };
+
+    Post.prototype.toJSON =  function () {
+        var values = Object.assign({}, this.get());
+      
+        delete values.author.password;
+        return values;
+    }
 
     // User.associate = (models) => {
     //     models.User.belongsTo(models.Role, {

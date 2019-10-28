@@ -10,7 +10,8 @@ const findAllPosts = async (req, res) => {
         limit,
         order: [
             ['created_at', 'DESC'],
-        ]
+        ],
+        include: [ { model: db.User, as: 'author' } ]
     })
 
     if (!posts.length && skip) {
@@ -60,6 +61,13 @@ const findPostById = id => db.Post.findOne({
     }
 })
 
+const findPostByUserId = userId => db.Post.findAll({
+    where: {
+        user_id: userId
+    },
+    limit: 10
+})
+
 const findPostByIdAndUpdate = (id, query) => db.Post.update(query, {
     where: { id } 
 })
@@ -69,9 +77,17 @@ const deletePostById = id => db.Post.destroy({ where: { id }})
 const deleteUserPosts = id => db.Post.destroy({ where: { user_id: id }})
 
 const getPopularPosts = async () => {
-    query = `SELECT Posts.OrderID, Posts.CustomerName
-    FROM Orders
-    INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID; LIMIT 5`
+    query = `SELECT 
+        i.id, 
+        i.title, 
+        i.slug, 
+        (SELECT AVG(rating)
+            FROM Comments 
+            WHERE post_id = i.id
+        ) as reviews
+        FROM Posts i
+        ORDER BY reviews DESC
+        LIMIT 5;`
 
     const posts = await db.sequelize.query(query, {
         type: db.sequelize.QueryTypes.SELECT
@@ -88,5 +104,6 @@ module.exports = {
     findPostByIdAndUpdate,
     deleteUserPosts,
     deletePostById,
-    getPopularPosts
+    getPopularPosts,
+    findPostByUserId
 }

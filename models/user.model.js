@@ -69,6 +69,10 @@ module.exports = (sequelize, Datatypes)=>{
         user.email = user.email.toLowerCase()
     });
 
+    User.beforeFind( async (user, options) => {
+        user.password = null;
+    });
+
     User.associate = (models) => {
         models.User.belongsTo(models.Role, { // automatically uses the primary key from role model
             as: 'access_level', // this is the hide field to populate the foreign key data

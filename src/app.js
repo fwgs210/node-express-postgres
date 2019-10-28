@@ -3,32 +3,17 @@ require('dotenv').config({ path: '.env' });
 const serverless = require('serverless-http');
 const path = require('path');
 const express = require('express')
-const mongoose = require('mongoose')
 const logger = require('morgan');
-mongoose.set('useCreateIndex', true);
-mongoose.set('useFindAndModify', false)
-require('./models/comment')
-require('./models/user')
-require('./models/post')
-require('./models/category')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser');
 const cors = require('cors')
 const isDev = process.env.NODE_ENV !== 'production'
-
-const { uri } = require('./config/serverSetup')
 const route = require('./routes')
 const routeNotFound = require('./routes/notFound')
 const routeError = require('./routes/errorRoute')
 const swagger = require('./swaggerApi')
 require('./middleware/passport');
 
-// Connect to our Database and handle any bad connections
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-mongoose.Promise = global.Promise; // Tell Mongoose to use ES6 promises
-mongoose.connection.on('error', (err) => {
-  console.error(`🙅 🚫 🙅 🚫 🙅 🚫 🙅 🚫 → ${err.message}`);
-});
 
 // express code here
 const app = express()
