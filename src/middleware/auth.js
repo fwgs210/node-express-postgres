@@ -6,15 +6,32 @@ module.exports.login = async (req, res, next) => {
         if(req.headers['authorization']) { // token re-login
             const bearerToken = req.headers['authorization'].split(' ')[1]
             const decoded = await verify(bearerToken)
-            req.token = bearerToken
-            req.user = {
-                id: decoded.id,
-                username: decoded.username,
-                email: decoded.email,
-                role: decoded.role
+
+            if(!decoded) {
+                return res.status(403).json({
+                    message: "Invalid token!"
+                })
             }
-            return next()
+
+            const userIdExist = await userService.findUserById(decoded.id)
+
+            if(userIdExist && decoded.username === userIdExist.username) {
+                req.token = bearerToken
+                req.user = {
+                    id: userIdExist.id,
+                    username: userIdExist.username,
+                    email: userIdExist.email,
+                    role: userIdExist.access_level.permission_level
+                }
+                return next()
+            } else {
+                return res.status(403).json({
+                    message: "User not exists!"
+                })
+            }
         }
+
+        // normal login
 
         const { username, password } = req.body
 
@@ -36,14 +53,14 @@ module.exports.login = async (req, res, next) => {
             id: user.id,
             username: user.username,
             email: user.email,
-            role: user.role
+            role: user.access_level.permission_level
         });
         
         const refreshToken = await signRefreshToken({ 
             id: user.id,
             username: user.username,
             email: user.email,
-            role: user.role
+            role: user.access_level.permission_level
         });
 
         req.token = token
@@ -52,7 +69,7 @@ module.exports.login = async (req, res, next) => {
             id: user.id,
             username: user.username,
             email: user.email,
-            role: user.role
+            role: user.access_level.permission_level
         }
 
         next()
@@ -67,9 +84,9 @@ module.exports.login = async (req, res, next) => {
 
 module.exports.authorization = async (req, res, next) => { // this always has to combine with login middleware
     try {
-        if (req.user.role !== 'administrator') {
+        if (req.user.role < 10) { // 10 is editor
             return res.status(403).json({
-                message: `Unauthorized role: ${req.user.role}`
+                message: `Unauthorized role level: ${req.user.role}`
             })
         } else {
             next()

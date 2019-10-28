@@ -8,18 +8,10 @@
     "operatorsAliases": false,
     "port": 8889
   },
-  "test": {
-    "username": "root",
-    "password": null,
-    "database": "database_test",
-    "host": "127.0.0.1",
-    "dialect": "mysql",
-    "operatorsAliases": false
-  },
   "production": {
-    "username": "mnyvrmhh",
-    "password": "Sw6wiXN5RSIzyOpyYCPzsSdhrUtgu9Em",
-    "database": "mnyvrmhh",
+    "username": "",
+    "password": "",
+    "database": "",
     "host": "postgres://mnyvrmhh:Sw6wiXN5RSIzyOpyYCPzsSdhrUtgu9Em@salt.db.elephantsql.com:5432/mnyvrmhh",
     "dialect": "postgres",
     "operatorsAliases": false

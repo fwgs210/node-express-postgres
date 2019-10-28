@@ -24,7 +24,7 @@ const postSchema = new Schema({
 postSchema.statics.getTopPosts = function() {
     return this.aggregate([
       // Lookup Stores and populate their reviews
-      { $lookup: { from: 'comments', localField: '_id', foreignField: 'postId', as: 'reviews' }},
+      { $lookup: { from: 'comments', localField: 'id', foreignField: 'postId', as: 'reviews' }},
       // filter for only items that have 2 or more reviews
       { $match: { 'reviews.1': { $exists: true } } },
       // Add the average reviews field
@@ -42,10 +42,10 @@ postSchema.statics.getTopPosts = function() {
     ]);
   }
 
-// find reviews where the stores _id property === reviews store property
+// find reviews where the stores id property === reviews store property
 postSchema.virtual('comments', {
     ref: 'Comment', // what model to link?
-    localField: '_id', // which field on the store?
+    localField: 'id', // which field on the store?
     foreignField: 'postId' // which field on the review?
 });
 

@@ -38,7 +38,7 @@ module.exports = (sequelize, Datatypes)=>{
             unique: true,
             validate: {
                 isEmail: true,
-                len:[7, 100],
+                len:[7, 50],
             }
         },
         role_level:{
@@ -49,25 +49,52 @@ module.exports = (sequelize, Datatypes)=>{
         }
     },
     {
-        underscored:true
+        timestamps:true,
+        underscored:true,
+        paranoid: true,
     });
 
     // Method 3 via the direct method
     User.beforeCreate( async (user, options) => {
         const hash = await hashPassword(user.password)
         user.password = hash;
+        user.username = user.username.toLowerCase()
+        user.email = user.email.toLowerCase()
     });
 
     User.beforeUpdate( async (user, options) => {
         const hash = await hashPassword(user.password)
         user.password = hash;
+        user.username = user.username.toLowerCase()
+        user.email = user.email.toLowerCase()
     });
 
     User.associate = (models) => {
-        models.User.belongsTo(models.Role, {
-          as: 'permission_level',
-          foreignKey: 'role_level'
+        models.User.belongsTo(models.Role, { // automatically uses the primary key from role model
+            as: 'access_level', // this is the hide field to populate the foreign key data
+            foreignKey: 'role_level' // this is the key for this user model
         });
+
+        // VideoclipPlaylistMap.belongsTo(Videoclip, { foreignKey: 'videoclipId', targetKey: 'videoId' });
+        // By default, in a belongsTo association, the model's primary key is used as the target key. You need to use the targetKey option in the association.
+
+
+
+        // models.User.belongsToMany(models.Post, {
+        //     as: 'posts', through: models.Post
+        // });
+
+        models.User.hasMany(models.Post, { as: 'posts' });
+        models.User.hasMany(models.Comment, { as: 'user_comments' });
     };
+
+    // hide password on find
+    User.prototype.toJSON = function() {
+        const values = Object.assign({}, this.get());
+      
+        delete values.password;
+        return values;
+    }
+
     return User;
 };

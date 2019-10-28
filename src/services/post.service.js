@@ -1,16 +1,17 @@
-const Post = require('../models/post')
+const db = require('../../models')
 
 const findAllPosts = async (req, res) => {
     const page = req.query.page || 1;
     const limit = req.query.limit || 10;
     const skip = (page * limit) - limit;
 
-    // 1. Query the database for a list of all stores
-    const posts = await Post
-        .find()
-        .skip(skip)
-        .limit(Number(limit))
-        .sort({ publishDate: 'desc' });
+    const posts = await db.Post.findAll({
+        offset: skip,
+        limit,
+        order: [
+            ['created_at', 'DESC'],
+        ]
+    })
 
     if (!posts.length && skip) {
         res.status(400).json({ message: `Hey! You asked for page ${page}. But that doesn't exist.` })
@@ -20,44 +21,54 @@ const findAllPosts = async (req, res) => {
 }
 
 const searchPosts = async query => {
-    const posts = await Post
-    // first find stores that match
-    .find({
-      $text: {
-        $search: query
-      }
-    }, {
-        matchSearch: { $meta: 'textScore' }
-    })
-    // the sort them
-    .sort({
-        matchSearch: { $meta: 'textScore' }
-    })
-    // limit to only 5 results
-    .limit(5);
+    const posts = await db.sequelize.query('SELECT * FROM Posts WHERE Posts.title LIKE "%":q"%" OR Posts.content LIKE "%":q"%" LIMIT 5', {
+        replacements: {q: query},
+        type: db.sequelize.QueryTypes.SELECT
+    });
+
+    // const posts = await Post
+    // // first find stores that match
+    // .find({
+    //   $text: {
+    //     $search: query
+    //   }
+    // }, {
+    //     matchSearch: { $meta: 'textScore' }
+    // })
+    // // the sort them
+    // .sort({
+    //     matchSearch: { $meta: 'textScore' }
+    // })
+    // // limit to only 5 results
+    // .limit(5);
 
     return posts
 }
 
 const addPost = async req => {
     req.body.slug = req.body.slug.startsWith('/') ? req.body.slug : `/${req.body.slug}`
-    const newPost = await new Post({
+    const newPost = await db.Post.create({
         ...req.body,
-        author: req.user._id,
-        publishDate: new Date()
+        user_id: req.user.id
     })
-    return await newPost.save()
+    return newPost
 }
 
-const findPostById = id => Post.findById(id)
+const findPostById = id => db.Post.findOne({
+    where: {
+        id
+    }
+})
 
-const findPostByIdAndUpdate = (id, query) => Post.findById(id, query)
+const findPostByIdAndUpdate = (id, query) => db.Post.update(query, {
+    where: { id } 
+})
 
-const deletePostById = id => Post.findByIdAndRemove(id)
+const deletePostById = id => db.Post.destroy({ where: { id }})
 
-const deleteUserPosts = id => Post.deleteMany({ 'author._id': id })
+const deleteUserPosts = id => db.Post.destroy({ where: { user_id: id }})
 
-const getPopularPosts = () => Post.getTopPosts()
+const getPopularPosts = () => db.Post.findAll().getComments()
 
 module.exports = {
     findAllPosts,

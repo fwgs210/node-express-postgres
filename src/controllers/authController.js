@@ -19,14 +19,14 @@ module.exports.reset = async(req, res) => {
         if (user) {
             
             const {
-                _id,
+                id,
                 username,
                 email,
                 role
             } = user
 
             const token = sign({ 
-                _id,
+                id,
                 username,
                 email,
                 role
@@ -63,10 +63,10 @@ module.exports.reset = async(req, res) => {
 module.exports.updateUserPassword = async (req, res) => {
     try {
         const { newPassword } = req.body;
-        const { _id } = req.user
+        const { id } = req.user
         const hashPass = await bcrypt.hash(newPassword, 10)
     
-        const updatedUser = await userService.findUserByIdAndUpdatePassword(_id, hashPass)
+        const updatedUser = await userService.findUserByIdAndUpdatePassword(id, hashPass)
         const newToken = await sign(updatedUser)
         res.status(200).json({ message: 'Password updated.', data: { token: newToken } })
     } catch (err) {

@@ -1,16 +1,21 @@
-const User = require('../models/user')
 const db = require('../../models')
 const bcrypt = require('bcryptjs')
 
-const comparePassword = (password, hash) => bcrypt.compare(password, hash)
+const comparePassword = (password, hash) => password === hash || bcrypt.compare(password, hash)
 
-const findUserByEmail = email => User.findOne({ email })
+const findUserByEmail = email => db.User.findOne({
+    where: {
+        email
+    },
+    include: [ { model: db.Role, as: 'access_level' } ]
+})
 
 const login = async (username, password) => {
     const user = await db.User.findOne({
         where: {
-            username: username
-        }
+            username
+        },
+        include: [ { model: db.Role, as: 'access_level' } ]
     })
     const isMatch = await comparePassword(password, user.password)
 
@@ -21,11 +26,20 @@ const login = async (username, password) => {
     return null
 }
 
-const findUserByIdAndUpdatePassword = (id, password) => User.findByIdAndUpdate(id, { password }, { new: true })// set new true to get the updated content
+const findUserByIdAndUpdatePassword = (id, password) => db.User.update(
+    { password }, /* set attributes' value */
+    { where: { id }} /* where criteria */
+)
 
-const findUserById = id => User.findById(id)
 
-const updateUserPosts = (id, newPost) => User.findByIdAndUpdate(id, { $push: { posts: newPost } })
+const findUserById = id => db.User.findOne({
+    where: {
+        id
+    },
+    include: [ { model: db.Role, as: 'access_level' } ]
+})
+
+// const updateUserPosts = (id, newPost) => User.findByIdAndUpdate(id, { $push: { posts: newPost } })
 
 const registerUser = async body => {
 
@@ -39,7 +53,6 @@ module.exports = {
     findUserByEmail,
     findUserById,
     findUserByIdAndUpdatePassword,
-    updateUserPosts,
     registerUser,
     login
 }

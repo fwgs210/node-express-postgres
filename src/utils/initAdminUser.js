@@ -9,7 +9,7 @@ module.exports = async () => {
             password: '87532998',
             email: 'info@tracysu.com',
             role: 'administrator',
-            _id: new mongoose.Types.ObjectId()
+            id: new mongoose.Types.ObjectId()
         })
         admin.save()
     }

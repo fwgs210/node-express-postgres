@@ -1,11 +1,12 @@
-const Category = require('../models/category')
+const db = require('../../models')
 
-const findACategory = categoryName => Category.findOne({ title: categoryName})
+const findACategory = categoryName => db.Category.findOne({
+    where: {
+        category_name: categoryName
+    }
+})
 
-const createCategory = async categoryName => {
-    const newCat = await new Category({title: categoryName})
-    return await newCat.save()
-}
+const createCategory = categoryName => db.Category.create({category_name: categoryName})
 
 module.exports = {
     findACategory,

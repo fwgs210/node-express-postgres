@@ -2,6 +2,7 @@ const express = require('express')
 const passport    = require('passport');
 const router = express.Router()
 const postController = require('../controllers/postController')
+const categoryController = require('../controllers/categoryController')
 const adminController = require('../controllers/adminController')
 const authController = require('../controllers/authController')
 const jwt = require('../middleware/auth')
@@ -24,12 +25,13 @@ router.route('/posts/search')
 router.route('/posts/create')
     .post(
         passport.authenticate('jwt', {session: false}), 
-        postController.addCategory,
+        categoryController.addCategory,
         postController.createNewPost
     )
 
-router.route('/posts/update/:id').put(
+router.route('/posts/update/:id').post(
     passport.authenticate('jwt', {session: false}), 
+    categoryController.addCategory,
     postController.editPost
 )
 

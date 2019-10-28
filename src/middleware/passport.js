@@ -21,15 +21,17 @@ passport.use(new LocalStrategy({
                 return next(null, false, { message: 'Incorrect email or password.' });
             }
             const token = sign({ 
-                _id: user._id,
+                id: user.id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                role: user.access_level.permission_level
             });
             
             const refreshToken =  signRefreshToken({ 
-                _id: user._id,
+                id: user.id,
                 username: user.username,
-                email: user.email
+                email: user.email,
+                role: user.access_level.permission_level
             });
 
             const tokens = {
@@ -53,7 +55,8 @@ passport.use(new JWTStrategy({
     async (jwtPayload, next) => {
         //find the user in db if needed
         try {
-            const user = await userService.findUserById(jwtPayload._id)
+            const user = await userService.findUserById(jwtPayload.id)
+            user.role = user.access_level.permission_level
             return next(null, user);
         } catch(err) {
             return next(err);

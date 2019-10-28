@@ -28,6 +28,7 @@
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.0.8",
     "mongoose-mongodb-errors": "^0.0.2",
+    "morgan": "^1.9.1",
     "mysql2": "^1.7.0",
     "netlify-lambda": "^1.6.3",
     "passport": "^0.4.0",
