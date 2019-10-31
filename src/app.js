@@ -45,7 +45,9 @@ app.use(routeError);
 // db.User.create({ username: 'fwgs210', password: '87532998', email:'test@test1.com', role_level: 1 })
 // db.User.create({ username: 'fwgs220', password: '87532998', email:'test@test2.com', role_level: 1 })
 // db.User.create({ username: 'fwgs230', password: '87532998', email:'test@test3.com', role_level: 1 })
-db.Chatroom.bulkCreate({id: 1, room_name: 'room 1'}, {id: 2, room_name: 'room 2'})
+
+
+// db.Chatroom.bulkCreate({id: 1, room_name: 'room 1'}, {id: 2, room_name: 'room 2'})
 // db.Chat.bulkCreate(
 //   { from_user_id: '376f638d-0b12-4611-9239-6e29405427b6', from_chatroom_id: 1, message: 'test content'},
 //   { from_user_id: '376f638d-0b12-4611-9239-6e294054as42', from_chatroom_id: 1, message: 'haha haah'},

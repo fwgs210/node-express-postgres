@@ -29,19 +29,40 @@ const findChatroomChats = roomId => db.Chatroom.findOne({
     limit: 50
 })
 
-const findUserChatrooms = userId => db.User.findOne({
-    where: {
-        id: userId
-    },
-    include: [ { model: db.Chatroom, as: 'chatrooms' } ], // it is like a virtual field
-    order: [
-        ['created_at', 'DESC'],
-    ],
-    limit: 10
-})
+// Get all chatrooms for this user
+const findUserChatrooms = async userId => {
+    const user = await db.User.findOne({
+        where: {
+            id: userId
+        }
+    })
+    return await user.getChatrooms({
+        order: [
+            ['created_at', 'DESC'],
+        ],
+        limit: 50
+    })
+// findAll({
+//     where: {
+//         id: userId
+//     },
+//     // Make sure to include the products
+//     include: [{
+//         model: db.Chatroom,
+//         as: 'chatrooms',
+//         required: false
+//     }],
+// });
+}
+
+const createChatroom = data => db.Chatroom.create(data)
+
+const createUsersToChatroomsTable = data => db.UsersToChatrooms.create(data)
 
 module.exports = {
     findAllChatsBetweenUsers,
     findChatroomChats,
-    findUserChatrooms
+    findUserChatrooms,
+    createChatroom,
+    createUsersToChatroomsTable
 }

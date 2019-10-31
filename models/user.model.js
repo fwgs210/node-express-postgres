@@ -89,7 +89,12 @@ module.exports = (sequelize, Datatypes)=>{
 
         models.User.hasMany(models.Post, { as: 'posts' });
         models.User.hasMany(models.Comment, { as: 'user_comments' });
-        models.User.belongsToMany(models.Chatroom, { through: 'user_chatrooms', foreignKey: 'user_chatroom_ids', as: 'chatrooms' });
+        models.User.belongsToMany(models.Chatroom, { 
+            through: 'users_to_chatrooms', 
+            as: 'chatrooms',
+            foreignKey: 'user_id', 
+            otherKey: 'chatroom_id'
+        });
     };
 
     // hide password on find
