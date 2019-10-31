@@ -44,8 +44,7 @@ module.exports = (sequelize, Datatypes)=>{
         role_level:{
             //fk in permission table
             type:Datatypes.INTEGER,
-            required:true,
-            allowNull:false
+            required:false,
         }
     },
     {
@@ -90,6 +89,7 @@ module.exports = (sequelize, Datatypes)=>{
 
         models.User.hasMany(models.Post, { as: 'posts' });
         models.User.hasMany(models.Comment, { as: 'user_comments' });
+        models.User.belongsToMany(models.Chatroom, { through: 'user_chatrooms', foreignKey: 'user_chatroom_ids', as: 'chatrooms' });
     };
 
     // hide password on find
