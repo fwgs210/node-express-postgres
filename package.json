@@ -9,7 +9,7 @@
     "node": "10.x"
   },
   "scripts": {
-    "dev": "cross-env NODE_ENV=development nodemon index.js",
+    "dev": "cross-env NODE_ENV=production nodemon index.js",
     "start": "cross-env NODE_ENV=production node index.js",
     "build": "netlify-lambda build src",
     "sample-data": "node ./data/load-sample-data.js",
