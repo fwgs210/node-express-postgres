@@ -20,5 +20,8 @@ router.route('/chatroom/user/:userId')
 
 router.route('/chatroom/create')
     .post(chatController.createChatroom)
-    
+
+router.route('/chatroom/chat')
+    .post(chatController.createChat)
+
 module.exports = router

@@ -22,7 +22,12 @@ const findChatroomChats = roomId => db.Chatroom.findOne({
     where: {
         id: roomId
     },
-    include: [ { model: db.Chat, as: 'chatroom_chats' } ], // it is like a virtual field
+    include: [ { 
+        model: db.Chat, 
+        as: 'chatroom_chats', 
+        attributes: ['message'],
+        include: [{ model: db.User, as: 'from_user', attributes: ['username'] }] 
+    } ], // it is like a virtual field
     order: [
         ['created_at', 'DESC'],
     ],
@@ -57,6 +62,8 @@ const findUserChatrooms = async userId => {
 
 const createChatroom = data => db.Chatroom.create(data)
 
+const createChat = data => db.Chat.create(data)
+
 const createUsersToChatroomsTable = data => db.UsersToChatrooms.create(data)
 
 module.exports = {
@@ -64,5 +71,6 @@ module.exports = {
     findChatroomChats,
     findUserChatrooms,
     createChatroom,
-    createUsersToChatroomsTable
+    createUsersToChatroomsTable,
+    createChat
 }

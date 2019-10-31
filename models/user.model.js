@@ -51,6 +51,9 @@ module.exports = (sequelize, Datatypes)=>{
         timestamps:true,
         underscored:true,
         paranoid: true,
+        defaultScope: {
+            attributes: { exclude: ['password'] }
+        }
     });
 
     // Method 3 via the direct method

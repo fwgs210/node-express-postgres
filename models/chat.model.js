@@ -14,11 +14,6 @@ module.exports = (sequelize, DataTypes) => {
         required:true,
         allowNull:true,
       },
-      from_chatroom_id: {
-        type: DataTypes.INTEGER,
-        required:true,
-        allowNull:true,
-      },
       message:{
         type: DataTypes.STRING,
         required:true,
@@ -36,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       });
       models.Chat.belongsTo(models.Chatroom, {
         as: 'from_chatroom', // this is the hide field to populate the foreign key data
-        foreignKey: 'from_chatroom_id'
+        foreignKey: 'chatroom_id'
       });
     };
   
