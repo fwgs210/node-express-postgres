@@ -58,7 +58,7 @@ module.exports = (sequelize, Datatypes)=>{
             foreignKey: 'user_id'
         });
         models.Post.belongsTo(models.Category);
-        models.User.hasMany(models.Comment, { as: 'comments' });
+        models.Post.hasMany(models.Comment, { as: 'comments' });
     };
 
     Post.prototype.toJSON =  function () {
@@ -67,15 +67,6 @@ module.exports = (sequelize, Datatypes)=>{
         delete values.author.password;
         return values;
     }
-
-    // User.associate = (models) => {
-    //     models.User.belongsTo(models.Role, {
-    //       as: 'permission_level',
-    //       foreignKey: 'role_level'
-    //     });
-
-    //     models.User.hasMany(models.Post, { as: 'Posts' });
-    // };
     
     return Post;
 };

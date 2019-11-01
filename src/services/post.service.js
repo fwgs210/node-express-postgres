@@ -11,7 +11,15 @@ const findAllPosts = async (req, res) => {
         order: [
             ['created_at', 'DESC'],
         ],
-        include: [ { model: db.User, as: 'author' } ]
+        include: [ 
+            { model: db.User, as: 'author' }, 
+            { 
+                model: db.Comment, 
+                as: 'comments',
+                attributes: ['rating', 'text'],
+                include: [{model: db.User, attributes: ['username']}]
+            } 
+        ]
     })
 
     if (!posts.length && skip) {
@@ -26,22 +34,6 @@ const searchPosts = async query => {
         replacements: {q: query},
         type: db.sequelize.QueryTypes.SELECT
     });
-
-    // const posts = await Post
-    // // first find stores that match
-    // .find({
-    //   $text: {
-    //     $search: query
-    //   }
-    // }, {
-    //     matchSearch: { $meta: 'textScore' }
-    // })
-    // // the sort them
-    // .sort({
-    //     matchSearch: { $meta: 'textScore' }
-    // })
-    // // limit to only 5 results
-    // .limit(5);
 
     return posts
 }

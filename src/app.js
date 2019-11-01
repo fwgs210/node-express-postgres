@@ -13,8 +13,6 @@ const routeNotFound = require('./routes/notFound')
 const routeError = require('./routes/errorRoute')
 const swagger = require('./swaggerApi')
 require('./middleware/passport');
-const db = require('../models')
-
 
 // express code here
 const app = express()
@@ -40,19 +38,6 @@ app.use(routeNotFound);
 
 // error handler
 app.use(routeError);
-
-// db.Role.create({permission_level: 10, permission_type: 'administrator'})
-// db.User.create({ username: 'fwgs210', password: '87532998', email:'test@test1.com', role_level: 1 })
-// db.User.create({ username: 'fwgs220', password: '87532998', email:'test@test2.com', role_level: 1 })
-// db.User.create({ username: 'fwgs230', password: '87532998', email:'test@test3.com', role_level: 1 })
-
-
-// db.Chatroom.bulkCreate({id: 1, room_name: 'room 1'}, {id: 2, room_name: 'room 2'})
-// db.Chat.bulkCreate(
-//   { from_user_id: '376f638d-0b12-4611-9239-6e29405427b6', from_chatroom_id: 1, message: 'test content'},
-//   { from_user_id: '376f638d-0b12-4611-9239-6e294054as42', from_chatroom_id: 1, message: 'haha haah'},
-//   { from_user_id: '376f638d-0b12-4611-9239-6e2940548809', from_chatroom_id: 2, message: 'here I am'},
-// )
 
 // If that above routes didnt work, we 404 them and forward to error handler
 
