@@ -35,12 +35,13 @@ const findChatroomChats = roomId => db.Chatroom.findOne({
 })
 
 // Get all chatrooms for this user
-const findUserChatrooms = async userId => {
+const findUserChatrooms = async id => {
     const user = await db.User.findOne({
         where: {
-            id: userId
+            id
         }
     })
+
     return await user.getChatrooms({
         order: [
             ['created_at', 'DESC'],
@@ -60,6 +61,23 @@ const findUserChatrooms = async userId => {
 // });
 }
 
+const findUserInChatroom = async (user_id, chatroom_id) => {
+    const query = `SELECT * FROM users_to_chatrooms 
+        WHERE user_id = :userId AND chatroom_id = :chatroomId
+        LIMIT 1`
+
+    const userIn = await db.sequelize.query(query, {
+        replacements: {
+            userId: user_id,
+            chatroomId: chatroom_id
+        },
+        type: db.sequelize.QueryTypes.SELECT
+    });
+
+    return userIn
+
+}
+
 const createChatroom = data => db.Chatroom.create(data)
 
 const createChat = data => db.Chat.create(data)
@@ -72,5 +90,6 @@ module.exports = {
     findUserChatrooms,
     createChatroom,
     createUsersToChatroomsTable,
-    createChat
+    createChat,
+    findUserInChatroom
 }

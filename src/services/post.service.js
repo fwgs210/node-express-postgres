@@ -1,32 +1,36 @@
 const db = require('../../models')
 
 const findAllPosts = async (req, res) => {
-    const page = req.query.page || 1;
-    const limit = req.query.limit || 10;
-    const skip = (page * limit) - limit;
+    try {
+        const page = req.query.page || 1;
+        const limit = req.query.limit || 10;
+        const skip = (page * limit) - limit;
 
-    const posts = await db.Post.findAll({
-        offset: skip,
-        limit,
-        order: [
-            ['created_at', 'DESC'],
-        ],
-        include: [ 
-            { model: db.User, as: 'author' }, 
-            { 
-                model: db.Comment, 
-                as: 'comments',
-                attributes: ['rating', 'text'],
-                include: [{model: db.User, attributes: ['username']}]
-            } 
-        ]
-    })
+        const posts = await db.Post.findAll({
+            offset: skip,
+            limit,
+            order: [
+                ['created_at', 'DESC'],
+            ],
+            include: [ 
+                { model: db.User, as: 'author' }, 
+                { 
+                    model: db.Comment, 
+                    as: 'comments',
+                    attributes: ['rating', 'text'],
+                    include: [{model: db.User, attributes: ['username']}]
+                } 
+            ]
+        })
 
-    if (!posts.length && skip) {
-        res.status(400).json({ message: `Hey! You asked for page ${page}. But that doesn't exist.` })
+        if (!posts.length && skip) {
+            res.status(400).json({ message: `Hey! You asked for page ${page}. But that doesn't exist.` })
+        }
+
+        return posts;
+    } catch(err) {
+        return res.status(500).json({ message: err.message })
     }
-
-    return posts;
 }
 
 const searchPosts = async query => {

@@ -20,7 +20,7 @@ router.route('/chatroom/create').post(
 )
 
 router.route('/chatroom/chat').post(
-    passport.authenticate('jwt', {session: false}), 
+    // passport.authenticate('jwt', {session: false}), 
     chatController.createChat
 )
 
