@@ -72,7 +72,7 @@ async function loadSampleData () {
 
 async function syncTables () {
     if(process.argv.includes('--sync')) {
-        await db.sequelize.query('SET FOREIGN_KEY_CHECKS = 0')
+        // await db.sequelize.query('SET FOREIGN_KEY_CHECKS = 0')
         await db.sequelize.sync({ force: true })
         return console.log('All tables synced! Ready to go!')
     } else {
