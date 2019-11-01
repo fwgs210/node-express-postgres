@@ -10,7 +10,7 @@ const db = {};
 
 let sequelize;
 if (env === 'production') {
-  sequelize = new Sequelize(config.host);
+  sequelize = new Sequelize('postgres://mnyvrmhh:Sw6wiXN5RSIzyOpyYCPzsSdhrUtgu9Em@salt.db.elephantsql.com:5432/mnyvrmhh');
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, config);
 }
