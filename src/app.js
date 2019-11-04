@@ -17,11 +17,12 @@ require('./middleware/passport');
 // express code here
 const app = express()
 
+app.use(cors())
+
 // serves up static files from the public folder. Anything in public/ will just be served up as the file it is
 app.use(express.static(path.join(__dirname, '../public')));
 
 //set up cors
-app.use(cors())
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
