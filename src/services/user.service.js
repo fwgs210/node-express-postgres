@@ -44,7 +44,7 @@ const findUserById = id => db.User.findOne({
 const registerUser = async body => {
 
     // return await user.save()
-    const user = await db.User.create({ username: body.username, password: body.password, email:body.email, role_level: 1 })
+    const user = await db.User.create({ username: body.username, password: body.password, email:body.email, role_level: 2 })
 
     return user
 }

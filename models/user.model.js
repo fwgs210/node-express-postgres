@@ -51,8 +51,18 @@ module.exports = (sequelize, Datatypes)=>{
         timestamps:true,
         underscored:true,
         paranoid: true,
-        defaultScope: {
-            attributes: { exclude: ['password'] }
+        // defaultScope: {
+        //     attributes: { exclude: ['password'] }
+        // },
+        // instanceMethods: {
+        //     validPassword: function(password) {
+        //       return bcrypt.compareSync(password, this.password);
+        //     }
+        // }    
+        scopes: {
+            hidePasswords: {
+                attributes: { exclude: ['password'] }
+            }
         }
     });
 
@@ -69,10 +79,6 @@ module.exports = (sequelize, Datatypes)=>{
         user.password = hash;
         user.username = user.username.toLowerCase()
         user.email = user.email.toLowerCase()
-    });
-
-    User.beforeFind( async (user, options) => {
-        user.password = null;
     });
 
     User.associate = (models) => {
