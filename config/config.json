@@ -8,6 +8,14 @@
     "operatorsAliases": false,
     "port": 8889
   },
+  "test": {
+    "username": "",
+    "password": "",
+    "database": "",
+    "host": "postgres://mnyvrmhh:Sw6wiXN5RSIzyOpyYCPzsSdhrUtgu9Em@salt.db.elephantsql.com:5432/mnyvrmhh",
+    "dialect": "postgres",
+    "operatorsAliases": false
+  },
   "production": {
     "username": "",
     "password": "",

@@ -11,7 +11,7 @@ const isDev = process.env.NODE_ENV !== 'production'
 const route = require('./routes')
 const routeNotFound = require('./routes/notFound')
 const routeError = require('./routes/errorRoute')
-const swagger = require('./swaggerApi')
+// const swagger = require('./swaggerApi')
 require('./middleware/passport');
 
 // express code here
@@ -32,7 +32,7 @@ app.use(cookieParser());
 app.use(route)
 
 // swagger
-app.use(swagger)
+// if(process.env.NODE_ENV !== 'test') app.use(swagger)
 
 // catch 404 and forward to error handler
 app.use(routeNotFound);
