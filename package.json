@@ -13,7 +13,7 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "sample-data": "node ./data/index.js",
     "sync": "node ./data/index.js --sync",
-    "test:watch": "NODE_ENV=test jest --watch",
+    "test:watch": "NODE_ENV=production jest --watch",
     "test:coverage": "NODE_ENV=test jest --coverage"
   },
   "dependencies": {
@@ -55,6 +55,7 @@
   },
   "jest": {
     "testPathIgnorePatterns": [
+      "<rootDir>/__tests__/setup.js",
       "<rootDir>/node_modules/"
     ]
   }
