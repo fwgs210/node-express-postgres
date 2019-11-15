@@ -7,20 +7,18 @@ connectDB()
 test('GET /api/v1/posts', async () => {
     const response = await request(app)
     .get('/api/v1/posts')
-    .set('Accept', 'application/json')
     .expect('Content-Type', /json/)
   
     expect(response.status).toEqual(200)
-    // expect(response.type).toEqual('application/json')
-    // expect(response.body.id).toBeDefined()
-    // expect(response.body.area_id).toBeDefined()
-    // expect(response.body.pickup_date).toBeDefined()
-    // expect(response.body.is_garbage).toBeDefined()
-    // expect(response.body.is_recycling).toBeDefined()
-    // expect(response.body.is_yard_waste).toBeDefined()
-    // expect(response.body.is_organic).toBeDefined()
-    // expect(response.body.is_christmas_tree).toBeDefined()
-    // expect(response.body.is_other).toBeDefined()
-    // expect(response.body.is_battery).toBeDefined()
-    // expect(response.body.is_exemption).toBeDefined()
+
+})
+
+test('POST /api/v1/user/login', async () => {
+    const response = await request(app)
+        .post('/api/v1/user/login')
+        .send({username: 'fwgs210', password: '87532998'})
+        .expect('Content-Type', /json/)
+
+        expect(response.status).toEqual(200)
+
 })
