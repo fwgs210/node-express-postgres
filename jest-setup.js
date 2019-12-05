@@ -14,5 +14,11 @@ module.exports = {
                 });
             });
         });
+
+        afterAll(async done => {
+            // Closing the DB connection allows Jest to exit successfully.
+            sequelize.close();
+            done();
+        });
     }
 }

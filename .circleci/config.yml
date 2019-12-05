@@ -5,6 +5,20 @@ jobs:
       - image: circleci/node:lts-browsers
     steps:
       - checkout
+      - restore_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - save_cache:
+          key: dependency-cache-{{ checksum "package.json" }}
+          paths:
+            - node_modules
+      - run:
+          name: Run Tests
+          command: npm run test
+  deploy:
+    steps:
       - run:
           name: Deploy Master to Heroku
           command: |

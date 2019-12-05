@@ -13,6 +13,7 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "sample-data": "node ./data/index.js",
     "sync": "node ./data/index.js --sync",
+    "test": "jest",
     "test:watch": "NODE_ENV=test jest --watch",
     "test:coverage": "NODE_ENV=test jest --coverage"
   },
