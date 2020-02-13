@@ -8,12 +8,14 @@ const env = process.env.NODE_ENV || 'development';
 const config = require(__dirname + '/../config/config.json')[env];
 const db = {};
 
-let sequelize;
-if (env === 'production' || env === 'test') {
-  sequelize = new Sequelize(config.host);
-} else {
-  sequelize = new Sequelize(config.database, config.username, config.password, config);
-}
+// let sequelize;
+// if (env === 'production' || env === 'test') {
+//   sequelize = new Sequelize(config.host);
+// } else {
+//   sequelize = new Sequelize(config.database, config.username, config.password, config);
+// }
+
+const sequelize = new Sequelize('postgres://mnyvrmhh:Sw6wiXN5RSIzyOpyYCPzsSdhrUtgu9Em@salt.db.elephantsql.com:5432/mnyvrmhh');
 
 fs
   .readdirSync(__dirname)
@@ -33,5 +35,20 @@ Object.keys(db).forEach(modelName => {
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
+
+const connection = {}
+
+db.connectToDatabase = async () => {
+  if (connection.isConnected) {
+    console.log('=> Using existing connection.')
+    return db
+  }
+
+//   await sequelize.sync()
+  await db.sequelize.authenticate()
+  connection.isConnected = true
+  console.log('=> Created a new connection.')
+  return db
+}
 
 module.exports = db;
