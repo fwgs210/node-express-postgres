@@ -1,0 +1,17 @@
+service: node-express-api
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  region: us-east-1
+  stage: production
+  environment: 
+    NODE_ENV: production
+
+functions:
+  serverlessHandler:
+    handler: lambda.handler
+    events:
+      - http:
+          path: '/{proxy+}'
+          method: any

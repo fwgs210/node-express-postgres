@@ -6,19 +6,20 @@ const findAllPosts = async (req, res) => {
         const limit = req.query.limit || 10;
         const skip = (page * limit) - limit;
 
-        const posts = await db.Post.findAll({
+        const models = await db.connectToDatabase()
+        const posts = await models.Post.findAll({
             offset: skip,
             limit,
             order: [
                 ['created_at', 'DESC'],
             ],
             include: [ 
-                { model: db.User, as: 'author' }, 
+                { model: models.User, as: 'author' }, 
                 { 
-                    model: db.Comment, 
+                    model: models.Comment, 
                     as: 'comments',
                     attributes: ['rating', 'text'],
-                    include: [{model: db.User, attributes: ['username']}]
+                    include: [{model: models.User, attributes: ['username']}]
                 } 
             ]
         })
